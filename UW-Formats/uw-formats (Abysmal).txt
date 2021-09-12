@@ -1400,7 +1400,7 @@ Table of Contents
    about word 0000, bit 8:
       For UW2 Bit 8 is set pretty often, and if set the light level changes.
       Ironically 1 sometimes means daylight (in Lord British Castle Lv 1) but
-      sometimes 0 means daylight (LBC Lv 5). But the areas are exactly right.
+      sometimes 0 means daylight (LBC Lv 5). But the areas are exactly right. dl.dat probably controls this
 
    about the floor height (word 0000, bits 4-7):
       UW internally uses 7 bits for the map height (0..127). The full range of
