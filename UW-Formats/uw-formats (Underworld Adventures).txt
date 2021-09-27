@@ -1073,7 +1073,7 @@ Table of Contents
    7300    01fc   free list for mobile objects (objects 0002-00ff, 254 x 2 bytes)
    74fc    0600   free list for static objects (objects 0100-03ff, 768 x 2 bytes)
    7afc    0104   unknown (260 bytes)  The first 256 bytes appear to correspond to NPCs and mobile object lists. Each one appears once in the list. Code loops that processes mobiles use this list rather than the mobile object free list.
-   7c00    0002
+   7c00    0002	  Maybe no of Npcs in the previous list. (loos like it is only updated on level transition)
    7c02    0002   no. entries in mobile free list minus 1
    7c04    0002   no. entries in static free list minus 1
    7c06    0002   0x7775 ('uw')
@@ -1903,7 +1903,7 @@ Table of Contents
    0132  0x0c00   critters table              64        48 bytes
    0d32  0x30     containers table            16         3 bytes
    0d62  0x20     light source table          16         2 bytes
-   0d82  0x20     unknown, maybe jewelry info table
+   0d82  0x20     unknown, maybe jewelry info table   --- Actually appears to be a Traps (but not triggers) table unknown meaning.
    0da2  0x40     animation object table      16         4 bytes
    0de2           end
 
