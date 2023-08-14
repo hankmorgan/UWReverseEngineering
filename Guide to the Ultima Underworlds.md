@@ -167,7 +167,7 @@
       - [``Tybal's Lair``](#tybals-lair)
       - [The ``Ethereal Void`` Endgame Map](#the-ethereal-void-endgame-map)
     - [``UW2`` Levels](#uw2-levels)
-      - [``Brittania``](#brittania)
+      - [``Britannia``](#britannia)
       - [``Pits Of Carnage``](#pits-of-carnage)
       - [The ``Ethereal Void``](#the-ethereal-void)
         - [QBert Puzzle.](#qbert-puzzle)
@@ -391,7 +391,10 @@ score = (skill-difficulty)+ rng (0-30d)
 Controls the ``mana`` points the player has. Available ``mana`` is the skill multipled by TODO. 
 
 ##### Lore
-Used for identification of objects. When an object is looked at a skill check of Lore Vs xx is performed and the result stored in the object ``heading`` value.
+Used for identification of objects. 
+
+When an object is looked at, a skill check of ``Lore`` Vs 8 is performed and the result stored in the object ``heading`` value.
+
 The ``heading`` bits 0-1 are set with values as follows:
 
     0 = Unidentified
@@ -401,12 +404,14 @@ The ``heading`` bits 0-1 are set with values as follows:
 Bit 2 is used to track if an identification attempt has been made. Value is set to 1 when the ``lore`` check is attempted. This prevents spamming ``lore`` checks when to brute-force identification. When the ``lore`` skill is increased this value is reset to 0 for all objects in the player inventory to allow re-examination.
 
 ##### Casting
-Used to perform a skill check whenever the player casts a runic spell. ``Casting`` skill check can have 3 results.
+Used to perform a skill check whenever the player casts a runic spell. ``Casting``.
+
+The skill check is ``Casting`` vs spell level * 3 is performed.
+
+The casting skill check can have 3 results.
 * Critical Success and Success- Spells is cast
 * Failure - Spell incantation Failed
 * Critical Failure - Spell backfires and applies TODO damage.
-
-TODO How this skillcheck works
 
 ##### Traps
 Used for disarming traps.
@@ -695,7 +700,7 @@ Creates a new object using the object referenced by the ``link`` field as a temp
 TODO: This trap has a random chance of running when sleeping to spawn monsters. Reconfirm the behaviour here.
 
 ##### a_damage trap
-TODO: Reconfirm. 
+TODO: Reconfirm. Use to apply a change in ``hp`` or to poison the player.
 
 
 ##### a_delete object trap
@@ -714,8 +719,16 @@ Moves the game camera to the location and points it in the direction of the trap
 ###### Platform Trap
 ``Quality`` 3
 
+Use to raise a platform up by TODO units.
+
 ###### Trespass Trap
 ``Quality`` 5
+
+Flags illegal activity to a particular race.
+
+ Eg when the avatar enters an area they are not allowed enter the move trigger may trigger a trespass trap that angers nearby creatures if a ``stealth`` check is failed
+
+TODO: Clarify details
 
 ###### Class Object Trap
 ``Quality`` 10
@@ -1259,7 +1272,8 @@ TODO: Why no magic
 #### The ``Ethereal Void`` Endgame Map
 
 ### ``UW2`` Levels
-#### ``Brittania``
+#### ``Britannia``
+Magic spells at level 3 or higher are hard coded to fail when cast in ``Britannia``
 
 #### ``Pits Of Carnage``
 TODO: Write up how the arena works.
