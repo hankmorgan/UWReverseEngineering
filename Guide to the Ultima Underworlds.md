@@ -10,7 +10,7 @@
   - [Differences Between ``UW1`` and ``UW2``](#differences-between-uw1-and-uw2)
   - [Common Elements between ``UW1`` and ``UW2``](#common-elements-between-uw1-and-uw2)
   - [File Formats](#file-formats)
-    - [Files](#files)
+    - [File List](#file-list)
     - [Tilemap and Object List](#tilemap-and-object-list)
     - [Player Data](#player-data)
       - [Player Data Overview](#player-data-overview)
@@ -20,6 +20,17 @@
       - [``UW2`` *Player.Dat*](#uw2-playerdat)
         - [Decoding and Encoding ``UW2`` *Player.Dat*](#decoding-and-encoding-uw2-playerdat)
         - [``UW1`` *Player.Dat* format](#uw1-playerdat-format-1)
+    - [Object data ``objects.dat``](#object-data-objectsdat)
+      - [Melee Weapons Table](#melee-weapons-table)
+      - [Ranged Weapons Table](#ranged-weapons-table)
+      - [Armour and Wearables Table](#armour-and-wearables-table)
+      - [Critters Table](#critters-table)
+        - [Loot sub table](#loot-sub-table)
+      - [Containers table](#containers-table)
+      - [Light Sources table](#light-sources-table)
+      - [Triggers Table](#triggers-table)
+      - [Animation Object Table](#animation-object-table)
+    - [Object Combining](#object-combining)
     - [Graphic Formats](#graphic-formats)
       - [Textures](#textures)
       - [Sprites](#sprites)
@@ -57,8 +68,18 @@
       - [Appraise](#appraise)
       - [Swimming](#swimming)
     - [Combat Mechanics](#combat-mechanics)
+      - [Attack types](#attack-types)
+      - [Swing Charge](#swing-charge)
+      - [Attack To Hit Calculations](#attack-to-hit-calculations)
+      - [Combat Damage Calculations](#combat-damage-calculations)
+      - [Equipment Damage Calculations](#equipment-damage-calculations)
+      - [Missile Combat](#missile-combat)
     - [Magic](#magic)
-      - [Spell List and Effects](#spell-list-and-effects)
+      - [Spell classes](#spell-classes)
+      - [Runic Magic](#runic-magic)
+      - [Non-runic spells](#non-runic-spells)
+        - [Class 0 Spells](#class-0-spells)
+        - [Class 1 Spells Motion](#class-1-spells-motion)
       - [Runic Spells](#runic-spells)
       - [Enchanted Items](#enchanted-items)
     - [Survival Mechanics](#survival-mechanics)
@@ -193,6 +214,9 @@ This document is a collection of documentation about the file formats and game m
 ### Contributors
 The information in this document is gathered from a number of sources most notably the vernable uw-formats.txt. Sections of this document if not taken directly from UW-Formats.txt are heavily based on the work that has gone into that document by a number of contributors and groups over the years. Every effort is being made to list this contributions here. To avoid missing anyone I am quoting verbatim the credit section of each copy of uw-formats.txt I can referencing.
 
+Also referenced
+https://wiki.ultimacodex.com/wiki/Ultima_Underworld_internal_formats (unknown authors)
+
 #### Credits
 ##### UW-Formats.txt from tthe Abysmal Project
    My thanks go out to Jim Cameron that started the original "uw-specs.txt"
@@ -250,6 +274,8 @@ The information in this document is gathered from a number of sources most notab
 
 Bits fields are referred to as zero based. Eg bit 0 is the first bit in a value.
 
+Sections of the document that are taken wholesale from uwformats.txt are prepended with the text **UWFormats.txt:**
+
 ## Differences Between ``UW1`` and ``UW2``
 * ``UW2`` uses a compressed ``lev.ark`` file. 
 * ``UW2`` has a different lev.ark block structure.
@@ -270,7 +296,7 @@ Bits fields are referred to as zero based. Eg bit 0 is the first bit in a value.
 * Conversation machine code works the same in both games.
 
 ## File Formats
-### Files
+### File List
 In a typical ``UUW`` installation the following files will be present
 
 TODO: Insert table here. With brief file overview
@@ -283,6 +309,7 @@ TODO: Insert table here. With brief file overview
 Player data is stored in ``*Player.Dat*`` files. In both games the data will begin with the player name, attributes, skills and various status bits. 
 
 Then will follow game variables, game state information, player object information(same format as game world objects) and player inventory (same format as game world object lists)
+
 
 
 #### ``UW1`` *Player.Dat*
@@ -300,6 +327,197 @@ TODO:
 
 TODO:
 
+### Object data ``objects.dat``
+
+UWFormats.txt: Object properties specific to a range of objects are stored in the file ``objects.dat``. The file contains several tables. Here is an overview:
+
+   pos   size     desc                        entries   bytes per entry
+   0000  Int16    unknown, always 0x010f
+   0002  0x80     melee weapons table         16         8 bytes
+   0082  0x30     ranged weapons table        16         3 bytes
+   00b2  0x80     armour and wearables table  32         4 bytes
+   0132  0x0c00   critters table              64        48 bytes
+   0d32  0x30     containers table            16         3 bytes
+   0d62  0x20     light source table          16         2 bytes
+   0d82  0x20     Traps table                  ?         ? bytes  * This table is likely 0x10 entries for triggers, and 0x10 entries for traps
+   0da2  0x40     animation object table      16         4 bytes
+   0de2           end
+
+* Note UWFormats had classed the table at 0d82 to be a jewelry info table original. It actually appears to be related to ``traps``
+* Some of the details in the following section were incorrect in UWformats.txt. The corrected version of the data is presented here.
+
+#### Melee Weapons Table
+
+| Offset  |  Size         | Name                      | Notes                                       |
+|---------|---------------|---------------------------|---------------------------------------------|
+|   0     | int8          | Slash ``Damage``          |                                             |
+|   1     | int8          | Bash ``Damage``           |                                             |
+|   2     | int8          | Stab ``Damage``           |                                             |
+|   3     | int8          |                           |    Unknown values here are possibly related |
+|   4     | int8          |                           |         to attack charge calculations       |
+|   5     | int8          |                           |                                             |
+|   6     | int8          | Skill                     | 3: sword, 4: axe, 5: mace, 6: unarmed       |
+|   7     | int8          | Durability                |                                             |
+
+#### Ranged Weapons Table
+Table is  a mix of missile ammo, missile weapons and magic projectiles
+
+| Offset  |  Size         | Name                      | Notes                                       |
+|---------|---------------|---------------------------|---------------------------------------------|
+| 0       | int8          | ``Damage``                |  The base damage for this missile           |
+| 1       | int8          | ``Durability``            |                                             |
+| 2       | int8          | Ammo Type/``Vulnerability``( or magic damage type?)|When a missile launcher give the index+32 of the ammo this weapon uses. When a missile projectile this appears to the the damage vulnerability for the weapon. (possibly a two complement negation). A value of 0xC0 appears to apply a normal damage calculation. TODO CONFIRM                                           |
+
+
+#### Armour and Wearables Table
+
+| Offset  |  Size         | Name                      | Notes                                       |
+|---------|---------------|---------------------------|---------------------------------------------|
+| 0       | int8          | ``Protection``            | How much defensive protection is provided by the armour |
+| 1       | int8          | ``Durability``            | How resistant this object is to being damage itself. A value of 0xFF means invulnerable to damage |
+| 2       | int8          | UNKNOWN                   | Possibly unused data                        |
+| 3       | int8          | Wearable slot             | What slot the item can be worn in.          |
+
+The Wearable slots are 
+|Slot number | Wearable type |
+|------------|---------------|
+|0           | Shield/arms   |
+|1           | Torso         |
+|3           | Legs          |
+|4           | Gloves        |
+|5           | Boots         |
+|8           | Head          |
+|9           | Rings         |
+
+#### Critters Table
+Ingame there are actually 127 entries in this table. The final entry which is all 0s is reserved for the player data and is copied over from the ``player.dat`` file. This is the representation of the player as a "critter" in the game.
+The presence of player attributes in the critter data point to some usages of data in this table.
+
+| Offset | Size     | Name                       | Notes                                                                                                                                                                                                                                                          |
+|--------|----------|----------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 0      | int8     | Level                      | The character level. When set to 1 for critters this applies a damage   reduction                                                                                                                                                                              |
+| 1      | int8     | Body part damage reduction | The damage reduction given by armour for a TODO body part                                                                                                                                                                                                      |
+| 2      | int8     | Body part damage reduction | The damage reduction given by armour for a TODO body part                                                                                                                                                                                                      |
+| 3      | int8     | Body part damage reduction | The damage reduction given by armour for a TODO body part                                                                                                                                                                                                      |
+| 4      | int8     | Max HP                     |                                                                                                                                                                                                                                                                |
+| 5      | int8     | ``Strength`` attribute     |                                                                                                                                                                                                                                                                |
+| 6      | int8     | ``Dexterity`` attribute    |                                                                                                                                                                                                                                                                |
+| 7      | int8     | ``Intelligence`` attribute |                                                                                                                                                                                                                                                                |
+| 8      | int8     | Fluid and remains          | A combination of remains after death and the type of blood splatters this   produces.   Fluids bits 5,6,7   Bits 3,4 appear to be weapon   vulnerabilities, Bits 0,1 is the sound to play on death. TODO RECONFIRM as   usages are mixed vs what is documented |
+| 9      | int8     | Race/General Type          | TODO RECONFRIM (An index into the strings on page 8, offset 370. This   string is the generic name for the creature, like "a creature" for   "a goblin" or "a rat" for "a giant rat". )                                                                        |
+| 0xA    | int8     | Passiveness                | Bits 2,3,4 Corpse object to drop offset by 0xC0, bit 6 is the critter a   swimmer, bit 7 is the critter a flier                                                                                                                                                |
+| 0xB    | int8     | Unknown                    |                                                                                                                                                                                                                                                                |
+| 0xC    | int8     | Movement speed             |                                                                                                                                                                                                                                                                |
+| 0xD    | int8     | Unknown                    | but used in trading                                                                                                                                                                                                                                            |
+| 0xE    | int8     | Unknown                    |                                                                                                                                                                                                                                                                |
+| 0xF    | int8     | ``Poison`` Damage,         |  how much max poison level can this   critter apply in an attack                                                                                                                                                                                               |
+| 10     | int8     | NPC Category               | TODO List the categories. These are masked by value 0xF                                                                                                                                                                                                        |
+| 11     | int8     | EquipmentDamage            |                                                                                                                                                                                                                                                                |
+| 12     | int8     | TODO                       | Possibly a defence value                                                                                                                                                                                                                                       |
+| 13     | int8     | Slash attack attack score  |                                                                                                                                                                                                                                                                |
+| 14     | int8     | Slash attack Damage        |                                                                                                                                                                                                                                                                |
+| 15     | int8     | Slash attack Probability   | How likely the critter will choose to make this attack If all zeros then   attack will not be made.                                                                                                                                                            |
+| 16     | int8     | Bash attack attack score   |                                                                                                                                                                                                                                                                |
+| 17     | int8     | Bash attack Damage         |                                                                                                                                                                                                                                                                |
+| 18     | int8     | Bash attack Probability    | How likely the critter will choose to make this attack If all zeros then   attack will not be made.                                                                                                                                                            |
+| 19     | int8     | Stab attack attack score   |                                                                                                                                                                                                                                                                |
+| 1a     | int8     | Stab attack Damage         |                                                                                                                                                                                                                                                                |
+| 1b     | int8     | Stab attack Probability    | How likely the critter will choose to make this attack If all zeros then   attack will not be made.                                                                                                                                                            |
+| 1c     | int8     | UNKNOWN                    | This value squared + 3 is used to compare with player distance from npc.   Possibly stealth detection score, Also used for attack flee threshold calcs.   TODO reconfirm                                                                                       |
+| 1d     | int8     | Search distance            | Used to calculate search distances. Used as a check value in   DetectMonsters()                                                                                                                                                                                |
+| 1e     | int8     | UNKNOWN                    | Bits 4,5,6,7 Referenced in angering npcs during theft as a distance. An   awareness range?                                                                                                                                                                     |
+| 1f     | int8     | Possibly missile skill     | Missile Accuracy or skill and another value that is looked at in   NpcWanderUpdate() to decide if NPC changes course. Referenced in combat   movement too                                                                                                      |
+| 20     | 3 x int8 | Loot table                 | See loot table below                                                                                                                                                                                                                                           |
+| 23     | int8     | UNKNOWN                    |                                                                                                                                                                                                                                                                |
+| 24     | int8     | UNKNOWN                    |                                                                                                                                                                                                                                                                |
+| 25     | int8     | UNKNOWN                    |                                                                                                                                                                                                                                                                |
+| 26     | int8     | Coin Loot                  | Bits 5-7 probability coins are dropped. Lower is better, Bits 0-3 coin   drop calculation divisor TODO document this calculation                                                                                                                               |
+| 27     | int8     | UNKNOWN                    |                                                                                                                                                                                                                                                                |
+| 28     | int16    | Experience                 | What exp is gained when killing this critter                                                                                                                                                                                                                   |
+| 2a     | 3 x int8 | Spell attack list          | List of spells critter can cast. All zeros for no spells. If a list   exists then final entry is FF                                                                                                                                                            |
+| 2d     | int8     | Magic user info            | bits 1-7 references in StudyMonster. Bit 0 is the critter a magic caster                                                                                                                                                                                       |
+| 2e     | int8     | Door unlock skill          | How proficent is this critter at opening doors. 0 cannot open doors. TODO   document other value meanings. I think it's    lockpicking skill score??)                                                                                                          |
+| 2f     | int8     | UNKNOWN                    | Always 0x65                                                                                                                                                                                                                                                    |
+
+##### Loot sub table
+TODO Double check the calculation.
+| Bit   | Meaning                                                |
+|-------|--------------------------------------------------------|
+| 0     | Set if loot can be spawned                             |
+| 1-7   | Loot item id is given by bits 1 to 4 PLUS bits 5 to 7  |
+
+
+#### Containers table
+
+| Offset  |  Size         | Name                      | Notes                                       |
+|---------|---------------|---------------------------|---------------------------------------------|
+| 0       | int8          | Capacity                  | In 0.1 stones                               |
+| 1       | int8          | Objects accepted          | 0: runes, 1: arrows, 2: scrolls, 3: edibles, 0xFF: any |
+| 2       | int8          | Trigger Mode              | number of slots available 0xFF means unlimited |
+
+#### Light Sources table
+| Offset  |  Size         | Name                      | Notes                                       |
+|---------|---------------|---------------------------|---------------------------------------------|
+| 0       | int8          | Brightness                | Max value is 4?                             |
+| 1       | int8          | Duration                  | Value of 0 means light never goes out       |
+
+
+#### Triggers Table
+This table associates the various ``triggers`` with their general type to control the circumstances in which they fire.
+Eg so a look trigger does not fire when the triggering action is movement.
+
+| Offset  |  Size         | Name                      | Notes                                       |
+|---------|---------------|---------------------------|---------------------------------------------|
+| 0       | int8          | Trigger Mode              | What type of trigger is this                |
+
+Trigger Mode values are
+
+| Mode | Type             | Notes |
+|------|------------------|-------|
+| 0    | Move             |       |
+| 2    | Pick up          |       |
+| 4    | Use              |       |
+| 5    | Look             |       |
+| 7    | Pressure         |       |
+| 0F   | Pressure release |       |
+| 6    | Enter            |       |
+| 0E   | Exit             |       |
+| 0B   | Unlock           |       |
+| 0A   | Timer            |       |
+| 8    | Open             |       |
+| 9    | Close            |       |
+| 0C   | Scheduled        |       |
+
+#### Animation Object Table
+| Offset  |  Size         | Name                      | Notes                                       |
+|---------|---------------|---------------------------|---------------------------------------------|
+| 0       | int8          | Capacity                  | unknown (0x00, 0x21 or 0x84)                |
+| 1       | int8          | Objects accepted          | unknown (always 0x00)                       |
+| 2       | int8          | Capacity                  | start frame (from ``animo.gr``)             |
+| 3       | int8          | Objects accepted          | number of frames                            |
+
+### Object Combining
+
+UWFormats.txt: In the Ultima Underworlds, when you `apply' certain objects to one another
+in your inventory a new object is created. 
+
+For example, pole + strong thread = fishing pole. 
+
+The mechanism for this is very simple and is controlled by the file ``cmb.dat`` in the data/ directory.
+
+This file contains a table of 3 16-bit words for each allowable
+combination: ``source1``, ``source2``, ``newobject`` in that order.
+
+3 zeros mark the end of the table. 
+
+The low 9 bits of each word is the object ID.
+
+If an object of type ``source1`` is applied to an object of type ``source2`` (or vice
+versa) an object of type ``newobject`` is created.
+
+The top bit of each of the source words indicates whether that object is destroyed in the process: if it is a 1, the object is destroyed. 
+
+* It is always the case that at least one of the source objects is destroyed.
 
 
 ### Graphic Formats
@@ -351,12 +569,12 @@ The game will detect that a character has been cheated with if the total attribu
 
 The score value is compared to a range of values to give one of 4 skill check results.
 
-|Final Score  |Result           |Return value |
-|-------------|-----------------|-------------|
-| < 3         |Critical Fail    |  -1         |
-| >=4 and<16  |Fail             |   0         |
-| >=16 and<=29|Success          |   1         |
-| >29         |Critical Success |   2         |
+| Final Score  | Result           | Return value |
+| ------------ | ---------------- | ------------ |
+| < 3          | Critical Fail    | -1           |
+| >=4 and<16   | Fail             | 0            |
+| >=16 and<=29 | Success          | 1            |
+| >29          | Critical Success | 2            |
 
 
 ```
@@ -535,7 +753,7 @@ To confirm - is there skill check critical results
 
 #### Appraise
 Use to evaluate the trade deal being currently offered in bartering
-Sums the value of the items being offered to and by the player. A skill check is tested against TODO and based on the sucess or failure the appropiate trade evaluation message is displayed
+Sums the value of the items being offered to and by the player. A skill check is tested against TODO and based on the sucess or failure the appropiate trade evaluation message is displayed.
 
 #### Swimming
 Use to control swimming speed(to confirm) and once a minute(to confirm) a skill check is performed against the ``swimming`` skill. 
@@ -552,9 +770,47 @@ ie
 
 ### Combat Mechanics
 
-### Magic
+#### Attack types
+Slash, Bash and Stab
 
-#### Spell List and Effects
+TODO explain the 3x3 combat screen grid
+
+#### Swing Charge
+
+#### Attack To Hit Calculations
+
+#### Combat Damage Calculations
+
+#### Equipment Damage Calculations
+
+
+#### Missile Combat
+
+### Magic
+#### Spell classes
+``UUW`` seems to have the following classes of spells (major spell classes) that are grouped into logically themed groups.
+
+| Major Class | Type of spell |
+| ----------- | ------------- |
+| 0           | TODO          |
+| 1           |               |
+
+#### Runic Magic
+Runic spells are defined in a hard-coded table within the exe. This table matches the spells to their major and minor spell class.
+
+| Spell | Major Class | Spell Circle | Overview |
+| ----- | ----------- | ------------ | -------- |
+| TODO  |             |              |          |
+
+#### Non-runic spells
+The major and minor class for other spells are classified based off of the ``link`` property of the casting object. TODO how again?
+
+
+##### Class 0 Spells
+
+##### Class 1 Spells Motion
+
+
 
 #### Runic Spells
 
@@ -956,12 +1212,12 @@ Opens or closes the door in the tile pointed to by the trigger ``X`` and ``Y``
 
 The ``quality`` value gives the mode of operation:
 
-|Mode | Action  |
-|-----|---------|
-| 0   | Lock    |  
-| 1   | Open    |
-| 2   | Close   |
-| 3   | Toggle  |
+| Mode | Action |
+| ---- | ------ |
+| 0    | Lock   |
+| 1    | Open   |
+| 2    | Close  |
+| 3    | Toggle |
 
 
 ##### a_flam rune
@@ -1009,16 +1265,16 @@ Looks like this trap does a skill check when triggered.
 Performs a special effect in the game world.
 
 ``Quality`` controls what effect is played.
-| ``Quality`` |  Effect      |
-|-------------|--------------|
-|      1      |Unknown       |
-|      2      |Guardian Laugh|
-|      3      |Unknown       |
-|      4      |Earthquake*   |
-|      5      |Red Flash     |
-|      6      |Black Flash   |
-|      7      |Orange Flash  |
-|      8      |Black Flash   |
+| ``Quality`` | Effect         |
+| ----------- | -------------- |
+| 1           | Unknown        |
+| 2           | Guardian Laugh |
+| 3           | Unknown        |
+| 4           | Earthquake*    |
+| 5           | Red Flash      |
+| 6           | Black Flash    |
+| 7           | Orange Flash   |
+| 8           | Black Flash    |
 
 * Owner controls how long the earthquake lasts
 
@@ -1121,7 +1377,7 @@ A trigger that fires when a door is unlocked.
 ## Quests
 ### ``UW1`` Quests
 | Quest No | Quest                                                  | Notes                                       |
-|----------|--------------------------------------------------------|---------------------------------------------|
+| -------- | ------------------------------------------------------ | ------------------------------------------- |
 | 0        | Dr. Owl's assistant Murgo freed                        |                                             |
 | 1        | talked to Hagbard                                      |                                             |
 | 2        | Met Dr. Owl?                                           |                                             |
@@ -1148,86 +1404,86 @@ A trigger that fires when a door is unlocked.
 
 ### ``UW2`` Quests
 
-| Quest No                                    | Description                                                                                              |
-|---------------------------------------------|----------------------------------------------------------------------------------------------------------|
-| 0                                           |  ``Prison Tower`` related - The troll is released                                                                      |
-| 1                                           |  ``Prison Tower`` related - Bishop is free?                                                                            |
-| 2                                           |  ``Prison Tower`` related - Borne wants you to   kill bishop                                                           |
-| 3                                           |  ``Prison Tower`` related - Bishop is dead                                                                             |
-| 6                                           |  Helena asks you to speak to   praetor loth                                                              |
-| 7                                           |  Loth is dead                                                                                            |
-| 8                                           |   Kintara tells you about Javra                                                                          |
-| 9                                           |   Lobar tells you about the   "virtues"                                                                  |
-| 10                                          |  ``Prison Tower`` related                                                                                              |
-| 11                                          |  Listener under the castle is dead.                                                                      |
-| 12                                          |  used in ``Ice Caverns`` to say the   avatar can banish the guardians presence. Wand of altara?              |
-| 13                                          |  Mystral wants you to spy on altara                                                                      |
-| 14                                          |  Likely all lines of power have   been cut.                                                              |
-| 15                                          |  Altara tells you about the   listener                                                                   |
-| 18                                          |  You learn that the Trikili can   talk.                                                                  |
-| 19                                          |  You know Relk has found the black   jewel (josie tells you)                                             |
-| 20                                          |  You've met Mokpo                                                                                        |
-| 22                                          |  Blog is now your friend(?)                                                                              |
-| 23                                          |  You have used Blog to defeat   dorstag                                                                  |
-| 24                                          |  You have won a duel in the arena                                                                        |
-| 25                                          |  You have defeated Zaria in the   pits                                                                   |
-| 26                                          |  You know about the magic scepter   (for the Zoranthus)                                                  |
-| 27                                          |  You know about the sigil of   binding/got the djinn bottle(by bringing the scepter to zorantus)         |
-| 28                                          |  Took Krilner as a slave                                                                                 |
-| 29                                          |  You know Dorstag has the gem(?)                                                                         |
-| 30                                          |  Dorstag refused your challenge(?)                                                                       |
-| 32                                          |  Met a Talorid                                                                                           |
-| 33                                          |  You have agreed to help the   talorid (historian)                                                       |
-| 34                                          |  Met or heard of Eloemosynathor                                                                          |
-| 35                                          |  The vortz are attacking!                                                                                |
-| 36                                          |  Quest to clarify question for Data   Integrator                                                         |
-| 37                                          |  ``Talorus`` related (checked by   futurian)                                                                 |
-| 38                                          |  ``Talorus`` related *bliy scup is   regenerated                                                             |
-| 39                                          |  ``Talorus`` related                                                                                         |
-| 40                                          |  Dialogian has helped with data   integrator                                                             |
-| 43                                          |  Patterson has gone postal                                                                               |
-| 45                                          |  Janar has been met and befriended                                                                       |
-| 47                                          |  You have recieve the quest from   the triliki                                                           |
-| 48                                          |  You have dreamed about the void                                                                         |
-| 49                                          |  Bishop tells you about the gem.                                                                         |
-| 50                                          |  The keep is going to crash.                                                                             |
-| 51                                          |  You have visited the ice caves   (``Brittania`` becomes icy)                                                |
-| 52                                          |  Have you cut the line of power in   the ``Ice Caverns``                                                     |
-| 54                                          |  Checked by Mors Gotha? related to   keep crashing                                                       |
-| 55                                          |  Banner of ``Killorn`` returned (based   on *SCD.ARK* research)                                                |
-| 58                                          |  Set when meeting bishop. Bishop   tells you about altara                                                |
-| 60                                          |  Possible ``Prison Tower`` variable.   used in check trap on second highest level                            |
-| 61                                          |  You've brought water to Josie                                                                           |
-| 63                                          |  Blog has given you the gem                                                                              |
-| 64                                          |  Is mors dead                                                                                            |
-| 65                                          |  Pits related (checked by dorstag)                                                                       |
-| 68                                          |  You have given the answers to   nystrul and the invasion (endgame) has begun.                           |
-| 104                                         |  Set when you enter scintilus level   5 (set by variable trap)                                           |
-| 105                                         |  Set when the air daemon is   absorbed. (see also xclock1 and xclock3 changes)                           |
-| 106                                         |  Got or read mors spellbook                                                                              |
-| 107                                         |  Set after freeing praetor loth and   you/others now know about the horn.                                |
-| 109                                         |  Set to 1 after first LB   conversation. All castle occupants check this on first talk.                  |
-| 110                                         |  Checked when talking to LB and   Dupre. The guardians forces are attacking                              |
-| 112                                         |  checked when talking to LB. You   have been fighting with the others                                    |
-| 114                                         |  checked when talking to LB. The   servants are restless                                                 |
-| 115                                         |  checked when talking to LB. The   servants are on strike                                                |
-| 116                                         |  The strike has been called off.                                                                         |
-| 117                                         |  Mors has been defeated in ``Killorn``                                                                        |
-| 118                                         |  The wisps tell you about the   trilikisssss2                                                            |
-| 119                                         |  Fizzit the thief surrenders                                                                             |
-| 120                                         |  checked by miranda?                                                                                     |
-| 121                                         |  You have defeated Dorstag                                                                               |
-| 122                                         |  You have killed the bly scup   ductosnore                                                               |
-| 123                                         |  Relk is dead                                                                                            |
-| 124 &   126  |          are referenced in teleport_trap                                                                                                |
-| 128                                         |  0-128 bit field of where the lines   of power have been broken.                                         |
-| 129                                         |  How many enemies killed in the   pits (also xclock 14)                                                  |
-| 131                                         |  You are told that you are in the   ``Prison Tower`` =1                                                      |
-| 132                                         |  Set to 2 during Kintara   conversation                                                                  |
-| 133                                         |  How much Jospur owes you for   fighting in the pits                                                     |
-| 134                                         |  The password for the ``Prison Tower``   (random value)                                                      |
-| 135                                         |  Checked by goblin in sewers  (no of worms killed on level. At more than   8 they give you fish)         |
-| 143                                         |  Set to 33 after first LB   conversation. Set to 3 during endgame (is this what triggers the cutscenes?) |
+| Quest No    | Description                                                                                             |
+| ----------- | ------------------------------------------------------------------------------------------------------- |
+| 0           | ``Prison Tower`` related - The troll is released                                                        |
+| 1           | ``Prison Tower`` related - Bishop is free?                                                              |
+| 2           | ``Prison Tower`` related - Borne wants you to   kill bishop                                             |
+| 3           | ``Prison Tower`` related - Bishop is dead                                                               |
+| 6           | Helena asks you to speak to   praetor loth                                                              |
+| 7           | Loth is dead                                                                                            |
+| 8           | Kintara tells you about Javra                                                                           |
+| 9           | Lobar tells you about the   "virtues"                                                                   |
+| 10          | ``Prison Tower`` related                                                                                |
+| 11          | Listener under the castle is dead.                                                                      |
+| 12          | used in ``Ice Caverns`` to say the   avatar can banish the guardians presence. Wand of altara?          |
+| 13          | Mystral wants you to spy on altara                                                                      |
+| 14          | Likely all lines of power have   been cut.                                                              |
+| 15          | Altara tells you about the   listener                                                                   |
+| 18          | You learn that the Trikili can   talk.                                                                  |
+| 19          | You know Relk has found the black   jewel (josie tells you)                                             |
+| 20          | You've met Mokpo                                                                                        |
+| 22          | Blog is now your friend(?)                                                                              |
+| 23          | You have used Blog to defeat   dorstag                                                                  |
+| 24          | You have won a duel in the arena                                                                        |
+| 25          | You have defeated Zaria in the   pits                                                                   |
+| 26          | You know about the magic scepter   (for the Zoranthus)                                                  |
+| 27          | You know about the sigil of   binding/got the djinn bottle(by bringing the scepter to zorantus)         |
+| 28          | Took Krilner as a slave                                                                                 |
+| 29          | You know Dorstag has the gem(?)                                                                         |
+| 30          | Dorstag refused your challenge(?)                                                                       |
+| 32          | Met a Talorid                                                                                           |
+| 33          | You have agreed to help the   talorid (historian)                                                       |
+| 34          | Met or heard of Eloemosynathor                                                                          |
+| 35          | The vortz are attacking!                                                                                |
+| 36          | Quest to clarify question for Data   Integrator                                                         |
+| 37          | ``Talorus`` related (checked by   futurian)                                                             |
+| 38          | ``Talorus`` related *bliy scup is   regenerated                                                         |
+| 39          | ``Talorus`` related                                                                                     |
+| 40          | Dialogian has helped with data   integrator                                                             |
+| 43          | Patterson has gone postal                                                                               |
+| 45          | Janar has been met and befriended                                                                       |
+| 47          | You have recieve the quest from   the triliki                                                           |
+| 48          | You have dreamed about the void                                                                         |
+| 49          | Bishop tells you about the gem.                                                                         |
+| 50          | The keep is going to crash.                                                                             |
+| 51          | You have visited the ice caves   (``Brittania`` becomes icy)                                            |
+| 52          | Have you cut the line of power in   the ``Ice Caverns``                                                 |
+| 54          | Checked by Mors Gotha? related to   keep crashing                                                       |
+| 55          | Banner of ``Killorn`` returned (based   on *SCD.ARK* research)                                          |
+| 58          | Set when meeting bishop. Bishop   tells you about altara                                                |
+| 60          | Possible ``Prison Tower`` variable.   used in check trap on second highest level                        |
+| 61          | You've brought water to Josie                                                                           |
+| 63          | Blog has given you the gem                                                                              |
+| 64          | Is mors dead                                                                                            |
+| 65          | Pits related (checked by dorstag)                                                                       |
+| 68          | You have given the answers to   nystrul and the invasion (endgame) has begun.                           |
+| 104         | Set when you enter scintilus level   5 (set by variable trap)                                           |
+| 105         | Set when the air daemon is   absorbed. (see also xclock1 and xclock3 changes)                           |
+| 106         | Got or read mors spellbook                                                                              |
+| 107         | Set after freeing praetor loth and   you/others now know about the horn.                                |
+| 109         | Set to 1 after first LB   conversation. All castle occupants check this on first talk.                  |
+| 110         | Checked when talking to LB and   Dupre. The guardians forces are attacking                              |
+| 112         | checked when talking to LB. You   have been fighting with the others                                    |
+| 114         | checked when talking to LB. The   servants are restless                                                 |
+| 115         | checked when talking to LB. The   servants are on strike                                                |
+| 116         | The strike has been called off.                                                                         |
+| 117         | Mors has been defeated in ``Killorn``                                                                   |
+| 118         | The wisps tell you about the   trilikisssss2                                                            |
+| 119         | Fizzit the thief surrenders                                                                             |
+| 120         | checked by miranda?                                                                                     |
+| 121         | You have defeated Dorstag                                                                               |
+| 122         | You have killed the bly scup   ductosnore                                                               |
+| 123         | Relk is dead                                                                                            |
+| 124 &   126 | are referenced in teleport_trap                                                                         |
+| 128         | 0-128 bit field of where the lines   of power have been broken.                                         |
+| 129         | How many enemies killed in the   pits (also xclock 14)                                                  |
+| 131         | You are told that you are in the   ``Prison Tower`` =1                                                  |
+| 132         | Set to 2 during Kintara   conversation                                                                  |
+| 133         | How much Jospur owes you for   fighting in the pits                                                     |
+| 134         | The password for the ``Prison Tower``   (random value)                                                  |
+| 135         | Checked by goblin in sewers  (no of worms killed on level. At more than   8 they give you fish)         |
+| 143         | Set to 33 after first LB   conversation. Set to 3 during endgame (is this what triggers the cutscenes?) |
 
 
 #### The X Clock
