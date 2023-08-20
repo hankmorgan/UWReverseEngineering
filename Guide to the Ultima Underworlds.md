@@ -14,10 +14,10 @@
     - [Tilemap and Object List](#tilemap-and-object-list)
     - [Player Data](#player-data)
       - [Player Data Overview](#player-data-overview)
-      - [``UW1`` *Player.Dat*](#uw1-playerdat)
+      - [``UW1`` ``Player.Dat``](#uw1-playerdat)
         - [Decoding and Encoding ``UW1`` *Player.Dat*](#decoding-and-encoding-uw1-playerdat)
-        - [``UW1`` *Player.Dat* format](#uw1-playerdat-format)
-      - [``UW2`` *Player.Dat*](#uw2-playerdat)
+        - [``UW1`` ``Player.Dat`` format](#uw1-playerdat-format)
+      - [``UW2`` ``Player.Dat``](#uw2-playerdat)
         - [Decoding and Encoding ``UW2`` *Player.Dat*](#decoding-and-encoding-uw2-playerdat)
         - [``UW1`` *Player.Dat* format](#uw1-playerdat-format-1)
     - [Object data ``objects.dat``](#object-data-objectsdat)
@@ -28,9 +28,10 @@
         - [Loot sub table](#loot-sub-table)
       - [Containers table](#containers-table)
       - [Light Sources table](#light-sources-table)
-      - [Triggers Table](#triggers-table)
+      - [Food Nutrition table](#food-nutrition-table)
       - [Animation Object Table](#animation-object-table)
-    - [Object Combining](#object-combining)
+    - [Object Combining ``cmb.dat``](#object-combining-cmbdat)
+      - [Common Object Data ``comobj.dat``](#common-object-data-comobjdat)
     - [Graphic Formats](#graphic-formats)
       - [Textures](#textures)
       - [Sprites](#sprites)
@@ -94,6 +95,7 @@
       - [Guardian Signet Ring](#guardian-signet-ring)
       - [Data Storage Crystal](#data-storage-crystal)
     - [Traps \& Triggers](#traps--triggers)
+      - [Triggers Table](#triggers-table)
       - [Traps](#traps-1)
         - [a\_arrow trap](#a_arrow-trap)
         - [a\_bridge trap](#a_bridge-trap)
@@ -269,7 +271,9 @@ https://wiki.ultimacodex.com/wiki/Ultima_Underworld_internal_formats (unknown au
 
 ## Terminology and Conventions
 ``UUW`` - Ultima Underworld, take this to mean both the Underworld games
+
 ``UW1`` - Ultima Underworld 1: The Stgygian Abyss.
+
 ``UW2`` - Ultima Underworld 2: The Labyrinth of Worlds
 
 Bits fields are referred to as zero based. Eg bit 0 is the first bit in a value.
@@ -283,7 +287,7 @@ Sections of the document that are taken wholesale from uwformats.txt are prepend
 * ``UW2`` Cutscenes support scrolling bitmaps.
 * ``Do Traps`` in ``UW1`` are renamed ``Hack Traps`` in ``UW2``.
 * ``UW2`` has additional terrain types including flowing water and slippery ice.
-* ``UW2`` has a different ``*Player.Dat*`` file format.
+* ``UW2`` has a different ``Player.Dat`` file format.
 * ``UW2`` supports more variables and has 3 categories of variable. Quest, Game and X-Clock.
 * ``UW2`` has a concept of grouping blocks of 8 levels in to worlds. These worlds may share common hard coded behaviours and events.
 * ``UW2`` has additional traps, triggers and conversation functions.
@@ -306,21 +310,21 @@ TODO: Insert table here. With brief file overview
 
 ### Player Data
 #### Player Data Overview
-Player data is stored in ``*Player.Dat*`` files. In both games the data will begin with the player name, attributes, skills and various status bits. 
+Player data is stored in ``Player.Dat`` files. In both games the data will begin with the player name, attributes, skills and various status bits. 
 
 Then will follow game variables, game state information, player object information(same format as game world objects) and player inventory (same format as game world object lists)
 
 
 
-#### ``UW1`` *Player.Dat*
+#### ``UW1`` ``Player.Dat``
 ##### Decoding and Encoding ``UW1`` *Player.Dat*
 
-##### ``UW1`` *Player.Dat* format
+##### ``UW1`` ``Player.Dat`` format
 
 TODO:
 
 
-#### ``UW2`` *Player.Dat*
+#### ``UW2`` ``Player.Dat``
 ##### Decoding and Encoding ``UW2`` *Player.Dat*
 
 ##### ``UW1`` *Player.Dat* format
@@ -331,20 +335,21 @@ TODO:
 
 UWFormats.txt: Object properties specific to a range of objects are stored in the file ``objects.dat``. The file contains several tables. Here is an overview:
 
-   pos   size     desc                        entries   bytes per entry
-   0000  Int16    unknown, always 0x010f
-   0002  0x80     melee weapons table         16         8 bytes
-   0082  0x30     ranged weapons table        16         3 bytes
-   00b2  0x80     armour and wearables table  32         4 bytes
-   0132  0x0c00   critters table              64        48 bytes
-   0d32  0x30     containers table            16         3 bytes
-   0d62  0x20     light source table          16         2 bytes
-   0d82  0x20     Traps table                  ?         ? bytes  * This table is likely 0x10 entries for triggers, and 0x10 entries for traps
-   0da2  0x40     animation object table      16         4 bytes
-   0de2           end
+|pos  | size  |   desc                   |     entries |  bytes per entry|
+|-----|-------|--------------------------|-------------|-----------------| 
+|0000 | Int16    unknown, always 0x010f  |             |                 |
+|0002 | 0x80     melee weapons table     |    16       |  8 bytes        |
+|0082 | 0x30     ranged weapons table    |    16       |  3 bytes        | 
+|00b2 | 0x80     armour and wearables table|  32       |  4 bytes        |
+|0132 | 0x0c00   critters table          |    64       | 48 bytes        |
+|0d32 | 0x30     containers table        |    16       |  3 bytes        |
+|0d62 | 0x20     light source table      |    16       |  2 bytes        |
+|0d82 | 0x10     Food Nutrition          |    16       |  1 byte*        |
+|0da2 | 0x40     animation object table  |    16       |  4 bytes        |
+|0de2 |          end                                                     |
 
-* Note UWFormats had classed the table at 0d82 to be a jewelry info table original. It actually appears to be related to ``traps``
-* Some of the details in the following section were incorrect in UWformats.txt. The corrected version of the data is presented here.
+* Note UWFormats had classed the table at 0d82 to be a jewelry info table original. It actually appears to be related to food nutrition and of size 16 bytes
+* Some of the details in the following section were incorrect in UWformats.txt. The corrected version of the data based on my research is presented here.
 
 #### Melee Weapons Table
 
@@ -462,31 +467,11 @@ TODO Double check the calculation.
 | 1       | int8          | Duration                  | Value of 0 means light never goes out       |
 
 
-#### Triggers Table
-This table associates the various ``triggers`` with their general type to control the circumstances in which they fire.
-Eg so a look trigger does not fire when the triggering action is movement.
+#### Food Nutrition table
+| Offset  |  Size         | Name                      | Notes                                         |
+|---------|---------------|---------------------------|-----------------------------------------------|
+| 0       | int8          | Nutrition                 | The amount of hunger reduction of a food item |
 
-| Offset  |  Size         | Name                      | Notes                                       |
-|---------|---------------|---------------------------|---------------------------------------------|
-| 0       | int8          | Trigger Mode              | What type of trigger is this                |
-
-Trigger Mode values are
-
-| Mode | Type             | Notes |
-|------|------------------|-------|
-| 0    | Move             |       |
-| 2    | Pick up          |       |
-| 4    | Use              |       |
-| 5    | Look             |       |
-| 7    | Pressure         |       |
-| 0F   | Pressure release |       |
-| 6    | Enter            |       |
-| 0E   | Exit             |       |
-| 0B   | Unlock           |       |
-| 0A   | Timer            |       |
-| 8    | Open             |       |
-| 9    | Close            |       |
-| 0C   | Scheduled        |       |
 
 #### Animation Object Table
 | Offset  |  Size         | Name                      | Notes                                       |
@@ -496,7 +481,7 @@ Trigger Mode values are
 | 2       | int8          | Capacity                  | start frame (from ``animo.gr``)             |
 | 3       | int8          | Objects accepted          | number of frames                            |
 
-### Object Combining
+### Object Combining ``cmb.dat``
 
 UWFormats.txt: In the Ultima Underworlds, when you `apply' certain objects to one another
 in your inventory a new object is created. 
@@ -518,6 +503,38 @@ versa) an object of type ``newobject`` is created.
 The top bit of each of the source words indicates whether that object is destroyed in the process: if it is a 1, the object is destroyed. 
 
 * It is always the case that at least one of the source objects is destroyed.
+
+#### Common Object Data ``comobj.dat``
+From UWFormats:   Object properties common to all items are stored in the file "comobj.dat". 
+The number of object properties is determined by (filelen-2) / 11   (each entry is 11 bytes long).
+The first two bytes of the file contain unknown information. Each entry has the following format
+
+
+
+| Offset |Size  |   Bits    | Name               | Notes                                        |
+|--------|------|-----------|--------------------|----------------------------------------------|
+| 0      |int8  |           | Height             |                                              |
+| 1      |int16 |  0-2      | Radius             |                                              |
+|        |      |  4-15     | Mass               | mass in 0.1 stones                           |
+| 3      |int8  |  5        | Can be picked up   |                                              |
+|        |      |  6-7      | Linkable/Stackable | 0 or 2 means object can stacked, 1 or 3 means it can be linked to another object.|
+| 4      |int16 |           | Monetary value     |                                              |
+| 6      |int8  |  2-3      | Quality Class      | Cannot be removed from the world when colliding in projectile motion when =3 Also door strength, 3=invulnerable, other values shift the damage value left |
+| 7      |int8  |  1-4      | Destroy on impact  | Checked when object hits the ground, only set when object is a damaging projectile type so this is probability the missile is removed from the world on impact when Rng (0-7) is less thanthe value. Any value >=8 means the projectile is destroyed on impact, 0 means object is not removed on impact. If the mobile object has bits 4,5,6 at offset 0xA set to 1 the projectile will be removed regardless of the below value and a splash spawned                                                 |
+|        |      |  5        | Unknown raycast    | Value used in relation to raycasting         |
+| 8      |int8  |  0-1      | Apply vulnerability chance |Used against an rng(0-2) call to see if damage vulnerabilitites will apply |
+|        |      |  3        | Unknown            | Set for demonic npcs only. Vulnerability?    |
+|        |      |  4        | Undead flag        | Set for undead npcs only                     |
+|        |      |  5        | Unknown            | Possibly vulnerability to fire               |
+|        |      |  6        | Unknown            | Only set on animos                           |
+|        |      |  7        | Unknown            | Only set on undead                           |
+| 9      |int8  |  0-1      | Render type        | 0 = sprite,1 = animated npc,2 = 3d model, 3 = texture map|
+|        |      |  2-5      | Culling priority   | A lower value means the object is more likely to be culled when the game needs more object space. |
+| 10     |int8  |  0-3      | Qualty Type        | Use to get the quality description strings, eg pristine, spoiled, worn etc |
+|        |      |  4        | LookAt Flag        | Uses a detailed LookAt Description that begins with "You See" instead of just printing the object name |
+
+From UWFormats on Quality Type
+Each possible value of "quality type" maps onto a group of 6 strings in block 4 from lowest to highest quality. Items which have a quality are always described as "a/an <quality> <item>", with the exception of group D  which is for armour items which are grammatically plural even if there is only one of the object, e.g. "leather leggings".
 
 
 ### Graphic Formats
@@ -876,6 +893,34 @@ A trap is a special object that performs an operation on the game world when tri
 Traps and Triggers are linked to each other and can be linked in a change of actions that allow for complex events.
 
 Example. A swich is connected to a use trigger which is connected to a door trap. When the swithch is pressed the use trigger fires and activates the door trap which will tell a specified door to open.
+
+#### Triggers Table
+This table in the exe file at offset TODO associates the various ``triggers`` with their general type to control the circumstances in which they fire.
+Eg so a look trigger does not fire when the triggering action is movement.
+
+| Offset  |  Size         | Name                      | Notes                                       |
+|---------|---------------|---------------------------|---------------------------------------------|
+| 0       | int8          | Trigger Mode              | What type of trigger is this                |
+
+Trigger Mode values are
+
+| Mode | Type             | Notes |
+|------|------------------|-------|
+| 0    | Move             |       |
+| 2    | Pick up          |       |
+| 4    | Use              |       |
+| 5    | Look             |       |
+| 7    | Pressure         |       |
+| 0F   | Pressure release |       |
+| 6    | Enter            |       |
+| 0E   | Exit             |       |
+| 0B   | Unlock           |       |
+| 0A   | Timer            |       |
+| 8    | Open             |       |
+| 9    | Close            |       |
+| 0C   | Scheduled        |       |
+
+
 
 #### Traps
 ##### a_arrow trap
