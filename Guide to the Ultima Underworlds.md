@@ -124,6 +124,7 @@
           - [TMAP Change Trap](#tmap-change-trap)
           - [Bullfrog Trap](#bullfrog-trap)
           - [Change Graffiti Trap](#change-graffiti-trap)
+        - [Bullfrog Puzzle Traps](#bullfrog-puzzle-traps)
           - [Bly Skup Chamber Trap](#bly-skup-chamber-trap)
           - [Scintillus Force Field Trap](#scintillus-force-field-trap)
           - [Change Object Quality Trap](#change-object-quality-trap)
@@ -140,6 +141,7 @@
           - [Spoil Healing Potion Trap](#spoil-healing-potion-trap)
           - [Change Visibility Trap](#change-visibility-trap)
           - [Vending Machine Selection Trap](#vending-machine-selection-trap)
+          - [Emerald Puzzle Trap](#emerald-puzzle-trap)
           - [Vending Machine Spawning Trap](#vending-machine-spawning-trap)
           - [Vending Machine Sign Trap](#vending-machine-sign-trap)
           - [A Talking Door!](#a-talking-door)
@@ -150,6 +152,7 @@
           - [Gem Face Rotate](#gem-face-rotate)
           - [World Teleport Trap](#world-teleport-trap)
           - [Unknown AI Goal Trap 62](#unknown-ai-goal-trap-62)
+          - [End Game Trap](#end-game-trap)
         - [a\_door trap](#a_door-trap)
         - [a\_flam rune](#a_flam-rune)
         - [a\_jump trap](#a_jump-trap)
@@ -1119,6 +1122,24 @@ TODO: Document the bullfrog.
 
 Changes graffiti in the ``Pits Of Carnage``
 
+##### Bullfrog Puzzle Traps
+
+Traps for controlling the Bullfrog puzzle on Level 4 of ``UW1``. The action of the trap is controlled by the ``Owner`` value.
+
+| Owner    |   Action     |
+|----------|--------------|
+|  0       | Raise tile   |
+|  1       | Lower tile   |
+|  2       | Increment X  |
+|  3       | Increment Y  |
+|  4       | Reset tiles  |
+
+X and Y  refer to the tile the trap is currently targeted by the trap. The value of x and Y will wrap around to 0 if incremented to 8 or more. The target tile will change ``height`` by 2 units and it's neighbour tiles will change ``height`` by 1 unit.
+
+The reset action is triggered by a special spell called "The Frog"
+
+It is strongly suspected that this trap is hard coded.
+
 ###### Bly Skup Chamber Trap
 ``Quality`` 25
 
@@ -1206,6 +1227,13 @@ Used to change the visibility of an object.
 
 Used to change the game variable that controls the currently selected vending machine item.
 
+###### Emerald Puzzle Trap
+``Quality`` 40
+
+Used for the emerald puzzle in the secret area on level 6 of ``UW1``
+
+Likely that this trap is hard coded. Checks for the presense of an emerald on 4 tiles and creates a TODO runestone as a reward.
+
 ###### Vending Machine Spawning Trap
 ``Quality`` 41
 
@@ -1263,6 +1291,11 @@ Currently unknown purpose. Used in ``Britannia``, ``Prison Tower`` and ``Killorn
 The current working theory is that it is used to direct a NPC to take an action
 
 EG in ``Britannia`` it appears to be linked to quest 109 and 112 which is set when the player is arrested for fighting in the castle. It will set Lord British's goal to 12 (based on the ``owner`` value) and causes British to walk to the prison cell to talk to the Avatar.
+
+###### End Game Trap
+``Quality`` 63
+
+This trap triggers the endgame cutscene and victory sequence in ``UW1``.
 
 ##### a_door trap
 Opens or closes the door in the tile pointed to by the trigger ``X`` and ``Y``
