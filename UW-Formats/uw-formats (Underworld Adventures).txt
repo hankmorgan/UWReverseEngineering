@@ -1157,7 +1157,7 @@ Table of Contents
         9-12   4   "flags"     Flags
           12   1   "enchant"   Enchantment flag (enchantable objects only)
           13   1   "doordir"   Direction flag (doors)
-          14   1   "invis"     Invisible flag (don't draw this object)
+          14 ï¿½ 1   "invis"     Invisible flag (don't draw this object)
           15   1   "is_quant"  Quantity flag (link field is quantity/special)
 
    0002 position
@@ -3235,10 +3235,10 @@ Table of Contents
    xfer.dat
    ----------
    The Underworld games use the (colour-index) translation tables in
-   data/xfer.dat for the transparencies (each transparency index has a
-   table). [The numbers here are an attempt to back-convert from the
-   translation table to RGBA values using a hairy little program of my own
-   devising. They look "about right", so I'm inclined to leave them.]
+  ï¿½data/xfer.dat for the transparencies (each transparency index has a
+  ï¿½table). [The numbers here are an attempt to back-convert from the
+  ï¿½translation table to RGBA values using a hairy little program of my own
+  ï¿½devising. They look "about right", so I'm inclined to leave them.]
    (description from TSSHP CVS)
 
 

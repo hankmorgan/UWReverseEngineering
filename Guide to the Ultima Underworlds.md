@@ -6,6 +6,7 @@
       - [Credits](#credits)
         - [UW-Formats.txt from tthe Abysmal Project](#uw-formatstxt-from-tthe-abysmal-project)
         - [Credits from the Underworld Adventures Prject](#credits-from-the-underworld-adventures-prject)
+        - [Other contributions](#other-contributions)
   - [Terminology and Conventions](#terminology-and-conventions)
   - [Differences Between ``UW1`` and ``UW2``](#differences-between-uw1-and-uw2)
   - [Common Elements between ``UW1`` and ``UW2``](#common-elements-between-uw1-and-uw2)
@@ -29,6 +30,7 @@
       - [Containers table](#containers-table)
       - [Light Sources table](#light-sources-table)
       - [Food Nutrition table](#food-nutrition-table)
+      - [Trigger Type Table](#trigger-type-table)
       - [Animation Object Table](#animation-object-table)
     - [Object Combining ``cmb.dat``](#object-combining-cmbdat)
       - [Common Object Data ``comobj.dat``](#common-object-data-comobjdat)
@@ -95,7 +97,6 @@
       - [Guardian Signet Ring](#guardian-signet-ring)
       - [Data Storage Crystal](#data-storage-crystal)
     - [Traps \& Triggers](#traps--triggers)
-      - [Triggers Table](#triggers-table)
       - [Traps](#traps-1)
         - [a\_arrow trap](#a_arrow-trap)
         - [a\_bridge trap](#a_bridge-trap)
@@ -267,7 +268,8 @@ https://wiki.ultimacodex.com/wiki/Ultima_Underworld_internal_formats (unknown au
    Copyright (c) 2002,2003,2004 Michael Fink
    Copyright (c) 2004 Kasper Fauerby
 
-
+##### Other contributions
+[KarlClinckspoor](https://github.com/KarlClinckspoor) on ``cmb.dat``
 
 ## Terminology and Conventions
 ``UUW`` - Ultima Underworld, take this to mean both the Underworld games
@@ -335,18 +337,19 @@ TODO:
 
 UWFormats.txt: Object properties specific to a range of objects are stored in the file ``objects.dat``. The file contains several tables. Here is an overview:
 
-|pos  | size  |   desc                   |     entries |  bytes per entry|
-|-----|-------|--------------------------|-------------|-----------------| 
-|0000 | Int16    unknown, always 0x010f  |             |                 |
-|0002 | 0x80     melee weapons table     |    16       |  8 bytes        |
-|0082 | 0x30     ranged weapons table    |    16       |  3 bytes        | 
-|00b2 | 0x80     armour and wearables table|  32       |  4 bytes        |
-|0132 | 0x0c00   critters table          |    64       | 48 bytes        |
-|0d32 | 0x30     containers table        |    16       |  3 bytes        |
-|0d62 | 0x20     light source table      |    16       |  2 bytes        |
-|0d82 | 0x10     Food Nutrition          |    16       |  1 byte*        |
-|0da2 | 0x40     animation object table  |    16       |  4 bytes        |
-|0de2 |          end                                                     |
+|pos  | size  |   desc                    |     entries |  bytes per entry|
+|-----|-------|---------------------------|-------------|-----------------| 
+|0000 | Int16 |   unknown, always 0x010f  |             |                 |
+|0002 | 0x80  |   melee weapons table     |    16       |  8 bytes        |
+|0082 | 0x30 |    ranged weapons table    |    16       |  3 bytes        | 
+|00b2 | 0x80 |    armour and wearables table|  32       |  4 bytes        |
+|0132 | 0x0c00|   critters table          |    64       | 48 bytes        |
+|0d32 | 0x30 |    containers table        |    16       |  3 bytes        |
+|0d62 | 0x20 |     light source table     |    16      |  2 bytes         |
+|0d82 | 0x10 |    Food Nutrition          |    16       |  1 byte*        |
+|0d92 | 0x10 |    Trigger Type Table      |   16        |  1 byte         |
+|0da2 | 0x40 |    animation object table  |    16       |  4 bytes        |
+|0de2 |          end                                                      |
 
 * Note UWFormats had classed the table at 0d82 to be a jewelry info table original. It actually appears to be related to food nutrition and of size 16 bytes
 * Some of the details in the following section were incorrect in UWformats.txt. The corrected version of the data based on my research is presented here.
@@ -472,6 +475,32 @@ TODO Double check the calculation.
 |---------|---------------|---------------------------|-----------------------------------------------|
 | 0       | int8          | Nutrition                 | The amount of hunger reduction of a food item |
 
+#### Trigger Type Table
+This table associates the various ``triggers`` with their general type to control the circumstances in which they fire.
+Eg so a look trigger does not fire when the triggering action is movement.
+
+| Offset  |  Size         | Name                      | Notes                                       |
+|---------|---------------|---------------------------|---------------------------------------------|
+| 0       | int8          | Trigger Mode              | What type of trigger is this                |
+
+Trigger Mode values are
+
+| Mode | Type             | Notes |
+|------|------------------|-------|
+| 0    | Move             |       |
+| 2    | Pick up          |       |
+| 4    | Use              |       |
+| 5    | Look             |       |
+| 7    | Pressure         |       |
+| 0F   | Pressure release |       |
+| 6    | Enter            |       |
+| 0E   | Exit             |       |
+| 0B   | Unlock           |       |
+| 0A   | Timer            |       |
+| 8    | Open             |       |
+| 9    | Close            |       |
+| 0C   | Scheduled        |       |
+
 
 #### Animation Object Table
 | Offset  |  Size         | Name                      | Notes                                       |
@@ -503,6 +532,17 @@ versa) an object of type ``newobject`` is created.
 The top bit of each of the source words indicates whether that object is destroyed in the process: if it is a 1, the object is destroyed. 
 
 * It is always the case that at least one of the source objects is destroyed.
+
+* New Objects are created with a default quality of 40.
+
+From [KarlClinckspoor](https://github.com/KarlClinckspoor)
+* There's a max of 10 item combinations. You can add more to cmb.dat, but the game won't recognize them.
+* If two items aren't flagged for destroying, they combination won't go through, but no errors will be raised.
+* If the created item can't be normally picked up, you won't be able to place it in your inventory
+* Items with durability seem to be created with serviceable durability (I made a mistake in the text saying they are created with excellent durability, it's specific to the black sword)
+* It's slightly different in UW1 and UW2. The hard limit of 10 items is the same, but while in UW1 a final entry was all zeroes, in UW2 empty entries are all 0xFFFF.
+
+
 
 #### Common Object Data ``comobj.dat``
 From UWFormats:   Object properties common to all items are stored in the file "comobj.dat". 
@@ -893,34 +933,6 @@ A trap is a special object that performs an operation on the game world when tri
 Traps and Triggers are linked to each other and can be linked in a change of actions that allow for complex events.
 
 Example. A swich is connected to a use trigger which is connected to a door trap. When the swithch is pressed the use trigger fires and activates the door trap which will tell a specified door to open.
-
-#### Triggers Table
-This table in the exe file at offset TODO associates the various ``triggers`` with their general type to control the circumstances in which they fire.
-Eg so a look trigger does not fire when the triggering action is movement.
-
-| Offset  |  Size         | Name                      | Notes                                       |
-|---------|---------------|---------------------------|---------------------------------------------|
-| 0       | int8          | Trigger Mode              | What type of trigger is this                |
-
-Trigger Mode values are
-
-| Mode | Type             | Notes |
-|------|------------------|-------|
-| 0    | Move             |       |
-| 2    | Pick up          |       |
-| 4    | Use              |       |
-| 5    | Look             |       |
-| 7    | Pressure         |       |
-| 0F   | Pressure release |       |
-| 6    | Enter            |       |
-| 0E   | Exit             |       |
-| 0B   | Unlock           |       |
-| 0A   | Timer            |       |
-| 8    | Open             |       |
-| 9    | Close            |       |
-| 0C   | Scheduled        |       |
-
-
 
 #### Traps
 ##### a_arrow trap
