@@ -83,6 +83,10 @@
       - [Non-runic spells](#non-runic-spells)
         - [Class 0 Spells](#class-0-spells)
         - [Class 1 Spells Motion](#class-1-spells-motion)
+        - [Class 4 Healing Spells](#class-4-healing-spells)
+        - [Class D Spells Misc Spells](#class-d-spells-misc-spells)
+          - [Class D Subclass 1  Altaras Wand Spell](#class-d-subclass-1--altaras-wand-spell)
+        - [Class E Spells Cutscenes](#class-e-spells-cutscenes)
       - [Runic Spells](#runic-spells)
       - [Enchanted Items](#enchanted-items)
     - [Survival Mechanics](#survival-mechanics)
@@ -848,15 +852,20 @@ TODO explain the 3x3 combat screen grid
 
 ### Magic
 #### Spell classes
-``UUW`` seems to have the following classes of spells (major spell classes) that are grouped into logically themed groups.
+``UUW`` seems to have the following classes of spells (major spell classes) that are grouped into logically themed groups. Within each major class of spell there will be a number of subclass spells to identify the specific spell being cast. This allows for variation of spells within the categories. EG multiple levels of healing spells.
 
 | Major Class | Type of spell |
 | ----------- | ------------- |
 | 0           | TODO          |
-| 1           |               |
+| 1           | Motion related|
+| ...         | TODO          |
+| 4           | Healing       |
+| ...         | TODO          |
+| 0xD         | Misc Spells   |
+| 0xE         | Cutscenes     |
 
 #### Runic Magic
-Runic spells are defined in a hard-coded table within the exe. This table matches the spells to their major and minor spell class.
+Runic spells are defined in a hard-coded table within the exe. This table matches the spells to their major and minor class numbers to identify the spell.
 
 | Spell | Major Class | Spell Circle | Overview |
 | ----- | ----------- | ------------ | -------- |
@@ -870,7 +879,43 @@ The major and minor class for other spells are classified based off of the ``lin
 
 ##### Class 1 Spells Motion
 
+TODO spells that affect how the player moves
 
+##### Class 4 Healing Spells
+
+Healing spells restore a random amount of the players ``HP``. The amount of ``HP`` restored is controlled by the subclass number of the spell. The formula for the ``HP`` restored is a for ``Diceroll`` of ``8DSubClass``
+
+Eg if the subclass of the spell is 4 (regular heal) then the ``HP`` restored is 8D4 points of ``HP``.
+
+* The greater heal spell is a special case (subclass is 0xF) and does not do the diceroll. Instead the max ``HP`` of the character will be restored.
+
+When healing happens to the player or an NPC then health cannot be set to a value higher than the player or NPCs max vitatility attribute.
+
+If the healing is cast on the player the "You are healed" message is displayed.
+
+##### Class D Spells Misc Spells
+This class contains a misc selection of spells.
+
+In ``UW2``
+###### Class D Subclass 1  Altaras Wand Spell
+This spell is used to cut the lines of power for the guardians spell. The spell checks an area of 4x4 tiles around the players location and tests for a signet ring that is has ``Invis`` = 0 and ``DoorDir`` = 0.
+
+When found the line of power is cut and the ``DoorDir`` value is set to 1. The bitfield at quest 128 is updated depending on the world number. The ring will be removed from the object list (Door dir is probably set to prevent spamming the spell).
+
+Special effects will occur when this happens. Spacey twinkies will spawn at the ring's location (possibly in the center of the tile) and sound effects will play (sounds no 18 and 42). The special effect flash colour (TODO what colour) is ran.
+
+When all lines of power are cut quest 14 will update to signify all power lines are cut.
+
+If the line is cut in the ``Ice Caverns`` quest 52 is updated. This maybe to allow for removal of the ice from ``Brittania``. 
+
+
+
+If the spell finds nothing the message "The spell has no noticeable effect" is displayed
+
+##### Class E Spells Cutscenes
+These are special spells that will play a cutscene when cast. They are normally only referenced by ``Spell Traps``
+
+The spell subclass controls the cutscene number to play and both fullscreen and windowed cutscenes can be played.
 
 #### Runic Spells
 
