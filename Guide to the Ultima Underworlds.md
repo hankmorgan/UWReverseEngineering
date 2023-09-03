@@ -20,195 +20,6 @@
         - [``UW1`` ``Player.Dat`` format](#uw1-playerdat-format)
       - [``UW2`` ``Player.Dat``](#uw2-playerdat)
         - [Decoding and Encoding ``UW2`` *Player.Dat*](#decoding-and-encoding-uw2-playerdat)
-        - [``UW2`` *Player.Dat* format](#uw2-playerdat-format)
-    - [Object data ``objects.dat``](#object-data-objectsdat)
-      - [Melee Weapons Table](#melee-weapons-table)
-      - [Ranged Weapons Table](#ranged-weapons-table)
-      - [Armour and Wearables Table](#armour-and-wearables-table)
-      - [Critters Table](#critters-table)
-        - [Loot sub table](#loot-sub-table)
-      - [Containers table](#containers-table)
-      - [Light Sources table](#light-sources-table)
-      - [Food Nutrition table](#food-nutrition-table)
-      - [Trigger Type Table](#trigger-type-table)
-      - [Animation Object Table](#animation-object-table)
-    - [Object Combining ``cmb.dat``](#object-combining-cmbdat)
-      - [Common Object Data ``comobj.dat``](#common-object-data-comobjdat)
-    - [Graphic Formats](#graphic-formats)
-      - [Textures](#textures)
-      - [Sprites](#sprites)
-      - [Bitmaps](#bitmaps)
-      - [3D Models](#3d-models)
-      - [Cutscenes](#cutscenes)
-      - [Scheduled Events (*SCD.ARK*)](#scheduled-events-scdark)
-  - [Game Mechanics](#game-mechanics)
-    - [RNG](#rng)
-    - [Attributes](#attributes)
-      - [Strength](#strength)
-      - [Intelligence](#intelligence)
-      - [Dexterity](#dexterity)
-      - [Cheat Detection](#cheat-detection)
-    - [Skills](#skills)
-      - [Skill Checks](#skill-checks)
-      - [Specific Skills](#specific-skills)
-        - [Attack](#attack)
-        - [Defence](#defence)
-        - [Unarmed](#unarmed)
-        - [Sword, Axe and Mace](#sword-axe-and-mace)
-        - [Missile](#missile)
-        - [Mana](#mana)
-        - [Lore](#lore)
-        - [Casting](#casting)
-        - [Traps](#traps)
-        - [Search](#search)
-        - [Track](#track)
-          - [Fishing Skill Check](#fishing-skill-check)
-      - [Sneak](#sneak)
-      - [Repair](#repair)
-      - [Charm](#charm)
-      - [Lockpick](#lockpick)
-      - [Acrobat](#acrobat)
-      - [Appraise](#appraise)
-      - [Swimming](#swimming)
-    - [Combat Mechanics](#combat-mechanics)
-      - [Attack types](#attack-types)
-      - [Swing Charge](#swing-charge)
-      - [Attack To Hit Calculations](#attack-to-hit-calculations)
-      - [Combat Damage Calculations](#combat-damage-calculations)
-      - [Equipment Damage Calculations](#equipment-damage-calculations)
-      - [Missile Combat](#missile-combat)
-    - [Magic](#magic)
-      - [Spell classes](#spell-classes)
-      - [Runic Magic](#runic-magic)
-      - [Non-runic spells](#non-runic-spells)
-        - [Class 0 Spells Light](#class-0-spells-light)
-        - [Class 1 Spells Motion](#class-1-spells-motion)
-          - [Class 1 Subclass 1 Leap](#class-1-subclass-1-leap)
-          - [Class 1 Subclass 2 Slowfall](#class-1-subclass-2-slowfall)
-          - [Class 1 Subclass 3 Levitation and Subclass 5 Flying](#class-1-subclass-3-levitation-and-subclass-5-flying)
-          - [Class 1 Subclass 4 Water walk](#class-1-subclass-4-water-walk)
-          - [Class 1 Subclass 6 Bouncing](#class-1-subclass-6-bouncing)
-        - [Class 2 Damage Resistance](#class-2-damage-resistance)
-        - [Class 3 Status Effects.](#class-3-status-effects)
-        - [Class 4 Healing Spells](#class-4-healing-spells)
-        - [Class 5 Projectiles](#class-5-projectiles)
-        - [Class 6 Area Effects](#class-6-area-effects)
-        - [Class 7 Targetted Spells](#class-7-targetted-spells)
-        - [Class 8 Spells Summoning](#class-8-spells-summoning)
-        - [Class A Mana Restore](#class-a-mana-restore)
-        - [Class B Misc Spells](#class-b-misc-spells)
-        - [Class D Misc Spells](#class-d-misc-spells)
-          - [Class D Subclass 0  Altaras Wand Spell](#class-d-subclass-0--altaras-wand-spell)
-          - [Class D Subclass 3,4,5 Basilisk Oil](#class-d-subclass-345-basilisk-oil)
-          - [Class D Subclass 7 Map Area](#class-d-subclass-7-map-area)
-        - [Class D Subclass 8 Acid Spit](#class-d-subclass-8-acid-spit)
-        - [Class E Spells Cutscenes](#class-e-spells-cutscenes)
-      - [Runic Spells](#runic-spells)
-      - [Enchanted Items](#enchanted-items)
-    - [Survival Mechanics](#survival-mechanics)
-      - [Sleeping](#sleeping)
-      - [Food](#food)
-      - [Death and Resurrection](#death-and-resurrection)
-      - [Intoxication](#intoxication)
-    - [Game Clock and Time](#game-clock-and-time)
-  - [Objects](#objects)
-    - [General Object Overview](#general-object-overview)
-    - [Special Objects](#special-objects)
-      - [Guardian Signet Ring](#guardian-signet-ring)
-      - [Data Storage Crystal](#data-storage-crystal)
-    - [Traps \& Triggers](#traps--triggers)
-      - [Traps](#traps-1)
-        - [a\_arrow trap](#a_arrow-trap)
-        - [a\_bridge trap](#a_bridge-trap)
-        - [a\_change from trap](#a_change-from-trap)
-        - [a\_change to trap](#a_change-to-trap)
-        - [a\_change terrain trap](#a_change-terrain-trap)
-        - [a\_check variable trap](#a_check-variable-trap)
-        - [a\_combination trap](#a_combination-trap)
-        - [a\_create object trap](#a_create-object-trap)
-        - [a\_damage trap](#a_damage-trap)
-        - [a\_delete object trap](#a_delete-object-trap)
-        - [a\_do trap or a\_hack\_trap](#a_do-trap-or-a_hack_trap)
-          - [Camera Trap](#camera-trap)
-          - [Platform Trap](#platform-trap)
-          - [Trespass Trap](#trespass-trap)
-          - [Class Object Trap](#class-object-trap)
-          - [Fraznium Forcefield](#fraznium-forcefield)
-          - [Unused Oscillating Trap](#unused-oscillating-trap)
-          - [Colour Cycling Trap](#colour-cycling-trap)
-          - [Ice Floor Collapse Trap](#ice-floor-collapse-trap)
-          - [Switch Puzzle Reset Trap](#switch-puzzle-reset-trap)
-          - [Platform Puzzle Reset Trap](#platform-puzzle-reset-trap)
-          - [Rising Platforms Trap](#rising-platforms-trap)
-          - [Loth Tomb Switches](#loth-tomb-switches)
-          - [TMAP Change Trap](#tmap-change-trap)
-          - [Bullfrog Trap](#bullfrog-trap)
-          - [Change Graffiti Trap](#change-graffiti-trap)
-        - [Bullfrog Puzzle Traps](#bullfrog-puzzle-traps)
-          - [Bly Skup Chamber Trap](#bly-skup-chamber-trap)
-          - [Scintillus Force Field Trap](#scintillus-force-field-trap)
-          - [Change Object Quality Trap](#change-object-quality-trap)
-          - [Change TMAP Trap](#change-tmap-trap)
-          - [Random Button Flicking Trap](#random-button-flicking-trap)
-          - [Avatar is a Coward Trap](#avatar-is-a-coward-trap)
-          - [Arena of Fire Safety Trap](#arena-of-fire-safety-trap)
-          - [QBert Puzzle Trap.](#qbert-puzzle-trap)
-          - [Bottle Recycler Trap](#bottle-recycler-trap)
-          - [The Castle Goes Dry Trap](#the-castle-goes-dry-trap)
-          - [Light Sphere Recharge Trap](#light-sphere-recharge-trap)
-          - [Britannia NPC Teleport](#britannia-npc-teleport)
-          - [Unknown Trap 37](#unknown-trap-37)
-          - [Spoil Healing Potion Trap](#spoil-healing-potion-trap)
-          - [Change Visibility Trap](#change-visibility-trap)
-          - [Vending Machine Selection Trap](#vending-machine-selection-trap)
-          - [Emerald Puzzle Trap](#emerald-puzzle-trap)
-          - [Vending Machine Spawning Trap](#vending-machine-spawning-trap)
-          - [Vending Machine Sign Trap](#vending-machine-sign-trap)
-          - [A Talking Door!](#a-talking-door)
-          - [Change NPC Goal Trap](#change-npc-goal-trap)
-          - [Sleep Trap](#sleep-trap)
-          - [Unknown Automap Trap](#unknown-automap-trap)
-          - [Start Conversation Trap](#start-conversation-trap)
-          - [Gem Face Rotate](#gem-face-rotate)
-          - [World Teleport Trap](#world-teleport-trap)
-          - [Unknown AI Goal Trap 62](#unknown-ai-goal-trap-62)
-          - [End Game Trap](#end-game-trap)
-        - [a\_door trap](#a_door-trap)
-        - [a\_flam rune](#a_flam-rune)
-        - [a\_jump trap](#a_jump-trap)
-        - [a\_null trap](#a_null-trap)
-        - [a\_pit trap](#a_pit-trap)
-        - [a\_proximity trap](#a_proximity-trap)
-        - [a\_set variable trap](#a_set-variable-trap)
-        - [a\_skill trap](#a_skill-trap)
-        - [a\_special effects trap](#a_special-effects-trap)
-        - [a\_spelltrap](#a_spelltrap)
-        - [a\_teleport trap](#a_teleport-trap)
-        - [a\_text string trap](#a_text-string-trap)
-        - [a\_tym rune](#a_tym-rune)
-        - [a\_ward trap or a\_tell trap](#a_ward-trap-or-a_tell-trap)
-        - [an\_experience trap](#an_experience-trap)
-        - [an\_inventory trap](#an_inventory-trap)
-        - [an\_oscillator trap](#an_oscillator-trap)
-      - [Triggers](#triggers)
-        - [a\_close trigger](#a_close-trigger)
-        - [a\_look trigger](#a_look-trigger)
-        - [a\_move trigger](#a_move-trigger)
-        - [a\_pick up trigger](#a_pick-up-trigger)
-        - [a\_pressure release trigger](#a_pressure-release-trigger)
-        - [a\_pressure trigger](#a_pressure-trigger)
-        - [a\_scheduled trigger](#a_scheduled-trigger)
-        - [a\_step on trigger](#a_step-on-trigger)
-        - [a\_timer trigger](#a_timer-trigger)
-        - [a\_use trigger](#a_use-trigger)
-        - [an\_enter trigger](#an_enter-trigger)
-        - [an\_exit trigger](#an_exit-trigger)
-        - [an\_open trigger](#an_open-trigger)
-        - [an\_unlock trigger](#an_unlock-trigger)
-  - [Quests](#quests)
-    - [``UW1`` Quests](#uw1-quests)
-    - [``UW2`` Quests](#uw2-quests)
-      - [The X Clock](#the-x-clock)
   - [Game worlds and Levels](#game-worlds-and-levels)
     - [``UW1`` Levels](#uw1-levels)
       - [``Tybal's Lair``](#tybals-lair)
@@ -343,6 +154,33 @@ Then will follow game variables, game state information, player object informati
 
 #### ``UW1`` ``Player.Dat``
 ##### Decoding and Encoding ``UW1`` *Player.Dat*
+
+From UW Formats:
+
+   The file "player.dat" contains the main character data. The first 220 bytes
+   are encrypted with a rather simple xor algorithm. The first byte in the
+   file is the starting xor value. The next byte is xor'ed with xorvalue + 3,
+   and for each next byte the xorvalue is incremented by 3. A simple
+   implementation in C is here (it is assumed that xorvalue already contains
+   the first byte)
+
+
+```
+int NoOfEncryptedBytes = 0xD2;
+int xOrValue = buffer[0];
+int incrnum = 3;
+for (int i = 1; i <= NoOfEncryptedBytes; i++)
+{
+    if ((i == 81) | (i == 161))
+    {
+        incrnum = 3;
+    }
+    buffer[i] ^= (byte)((xOrValue + incrnum) & 0xFF);
+    incrnum += 3;
+}
+```
+
+The same algorithm can be used to encode the file again. The initial XOR key value can be any value. 
 
 ##### ``UW1`` ``Player.Dat`` format
 
@@ -665,6 +503,96 @@ Then will follow game variables, game state information, player object informati
 
 #### ``UW2`` ``Player.Dat``
 ##### Decoding and Encoding ``UW2`` *Player.Dat*
+
+From UWFormats:
+
+   The player.dat of uw2 is encoded with a different scheme than the one of
+   uw1. The encryption algorithm uses a block of magic bytes in combination
+   with previous ciphertext and plaintext.
+
+   File layout
+
+   0000   int8    magic seed
+   0001 - 037D    encrypted character data
+   037E - eof     inventory data in plaintext
+
+   How to set up the magic bytes:
+   The magic bytes are always 80 (0x50) bytes. They are filled in 4 rounds
+   with differing stride using and changing the magic seed (MS from now on).
+   The algorithm assumes the MS to be stored in an unsigned 8 bit variable
+   and will overflow on MS multiple times.
+
+   Magic Array (MA) fill algorithm:
+
+```
+    MS += 7;
+    for (i = 0; i<80; ++i)
+    {
+        MS += 6;
+        MA[i] = MS;
+    }
+    for (i = 0; i<16; ++i)
+    {
+        MS += 7;
+        MA[i*5] = MS;
+    }
+    for (i = 0; i<4; ++i)
+    {
+        MS += 0x29;
+        MA[i*12] = MS;
+    }
+    for (i = 0; i<11; ++i)
+    {
+        MS += 0x49;
+        MA[i*7] = MS;
+    }
+
+    ```
+
+   Notes on filling the MA bytes:
+     - not resetting MS between loops is intentional.
+      - unlike the first two rounds, the last two rounds are cut short.
+      - the algorithm to fill MA was derived from an assembly trace of
+        Robin Wöhlers uw2edit.exe. He uses a round 0 before the first round
+        which is subsequently overwritten. This first round only results in
+        increasing MS by 7, thus the first line of the algorithm outlined here.
+
+   Example:
+   A magic seed of 0x98 results in the following MA:
+       0 | dc ab b1 b7 bd 8d c9 25 d5 db 94 e7 41 f3 6e 9b
+      10 | 05 0b 11 17 a2 b7 29 2f 6a a9 41 47 00 53 b0 5f
+      20 | 65 6b 71 49 93 83 89 8f be 9b 92 a7 ad c5 b9 bf
+      30 | c5 db cc d7 dd e3 e9 d3 24 fb 01 07 da 13 19 6d
+      40 | 25 e1 31 37 3d 43 b6 4f 55 5b 61 ef 6d ff 79 7f
+
+   Decrypting PLAYER.DAT:
+   After setting up the MA, the ciphertext of the character (C) can be
+   decrypted to the plaintext of the character (P). The ciphertext of
+   0x037D bytes is split in blocks of 0x50 bytes, with the last block
+   being cut short.
+
+   Each block is decoded as follows, with ^ denoting a XOR operation:
+     P[0] = C[0] ^ M[0]
+     for (i=1; i<0x50;++i)
+     {
+        P[i] = C[i] ^ (P[i-1] + C[i-1] + M[i])
+     }
+   Notes on decrypting:
+     - remember to account for the shorter last block
+     - in terms of cryptography, this algorithm sucks. don't reuse
+     - the algorithm is fully symmetric and can also be used for encryption
+     - the algorithm was derived from an assembly trace of Underworld 2.
+
+   Encrypting:
+   As mentioned before, the same algorithm can be used to encrypt and decrypt.
+   The trick is figuring out MS and MA. If an existing file is modified, MS
+   and MA can be reused if the first letter of the character name is not
+   changed. Otherwise a new MS and MA have to be calculated.
+
+   Apparently the the MS can be calculated as
+       0xAA ^ (first letter of character name), thanks Al_B from TTLG forums
+
+
 
 ##### ``UW2`` *Player.Dat* format
 
@@ -2443,7 +2371,7 @@ The spell subclass controls the cutscene number to play and both fullscreen and 
 A summary of some objects with special behaviours
 
 #### Guardian Signet Ring
-The guardian signet ring when invisible is used to mark a place of power for the wand of Altara spell.
+The guardian signet ring when invisible and has a ``Doordir`` value of 0 is used to mark a place of power for the wand of Altara spell.
 
 #### Data Storage Crystal
 The text on the data crystal is set based on the crystal ``quality``.
@@ -3196,6 +3124,9 @@ TODO Document this puzzle
 
 ## Unanswered Questions and Problems
 
+* SCD.ARK is still not fully understood
+* Recompressing UW2 lev.ark files
+* How Garamon's dreams are sequenced in ``UW1``
 
 ## Code Examples
 
