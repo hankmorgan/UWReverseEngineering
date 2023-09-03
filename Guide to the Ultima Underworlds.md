@@ -5,7 +5,7 @@
     - [Contributors](#contributors)
       - [Credits](#credits)
         - [UW-Formats.txt from tthe Abysmal Project](#uw-formatstxt-from-tthe-abysmal-project)
-        - [Credits from the Underworld Adventures Prject](#credits-from-the-underworld-adventures-prject)
+        - [Credits from the Underworld Adventures Project](#credits-from-the-underworld-adventures-project)
         - [Other contributions](#other-contributions)
   - [Terminology and Conventions](#terminology-and-conventions)
   - [Differences Between ``UW1`` and ``UW2``](#differences-between-uw1-and-uw2)
@@ -20,6 +20,196 @@
         - [``UW1`` ``Player.Dat`` format](#uw1-playerdat-format)
       - [``UW2`` ``Player.Dat``](#uw2-playerdat)
         - [Decoding and Encoding ``UW2`` *Player.Dat*](#decoding-and-encoding-uw2-playerdat)
+        - [``UW2`` *Player.Dat* format](#uw2-playerdat-format)
+    - [Object data ``objects.dat``](#object-data-objectsdat)
+      - [Melee Weapons Table](#melee-weapons-table)
+      - [Ranged Weapons Table](#ranged-weapons-table)
+      - [Armour and Wearables Table](#armour-and-wearables-table)
+      - [Critters Table](#critters-table)
+        - [Loot sub table](#loot-sub-table)
+      - [Containers table](#containers-table)
+      - [Light Sources table](#light-sources-table)
+      - [Food Nutrition table](#food-nutrition-table)
+      - [Trigger Type Table](#trigger-type-table)
+      - [Animation Object Table](#animation-object-table)
+    - [Object Combining ``cmb.dat``](#object-combining-cmbdat)
+      - [Common Object Data ``comobj.dat``](#common-object-data-comobjdat)
+    - [Graphic Formats](#graphic-formats)
+      - [Textures](#textures)
+      - [Sprites](#sprites)
+      - [Bitmaps](#bitmaps)
+      - [3D Models](#3d-models)
+      - [Cutscenes](#cutscenes)
+    - [Dungeon Light Levels (*dl.dat*)](#dungeon-light-levels-dldat)
+    - [Scheduled Events (*SCD.ARK*)](#scheduled-events-scdark)
+  - [Game Mechanics](#game-mechanics)
+    - [RNG](#rng)
+    - [Attributes](#attributes)
+      - [Strength](#strength)
+      - [Intelligence](#intelligence)
+      - [Dexterity](#dexterity)
+      - [Cheat Detection](#cheat-detection)
+    - [Skills](#skills)
+      - [Skill Checks](#skill-checks)
+      - [Specific Skills](#specific-skills)
+        - [Attack](#attack)
+        - [Defence](#defence)
+        - [Unarmed](#unarmed)
+        - [Sword, Axe and Mace](#sword-axe-and-mace)
+        - [Missile](#missile)
+        - [Mana](#mana)
+        - [Lore](#lore)
+        - [Casting](#casting)
+        - [Traps](#traps)
+        - [Search](#search)
+        - [Track](#track)
+          - [Fishing Skill Check](#fishing-skill-check)
+      - [Sneak](#sneak)
+      - [Repair](#repair)
+      - [Charm](#charm)
+      - [Lockpick](#lockpick)
+      - [Acrobat](#acrobat)
+      - [Appraise](#appraise)
+      - [Swimming](#swimming)
+    - [Combat Mechanics](#combat-mechanics)
+      - [Attack types](#attack-types)
+      - [Swing Charge](#swing-charge)
+      - [Attack To Hit Calculations](#attack-to-hit-calculations)
+      - [Combat Damage Calculations](#combat-damage-calculations)
+      - [Equipment Damage Calculations](#equipment-damage-calculations)
+      - [Missile Combat](#missile-combat)
+    - [Magic](#magic)
+      - [Spell classes](#spell-classes)
+      - [Runic Magic](#runic-magic)
+      - [Non-runic spells](#non-runic-spells)
+        - [Class 0 Spells Light](#class-0-spells-light)
+        - [Class 1 Spells Motion](#class-1-spells-motion)
+          - [Class 1 Subclass 1 Leap](#class-1-subclass-1-leap)
+          - [Class 1 Subclass 2 Slowfall](#class-1-subclass-2-slowfall)
+          - [Class 1 Subclass 3 Levitation and Subclass 5 Flying](#class-1-subclass-3-levitation-and-subclass-5-flying)
+          - [Class 1 Subclass 4 Water walk](#class-1-subclass-4-water-walk)
+          - [Class 1 Subclass 6 Bouncing](#class-1-subclass-6-bouncing)
+        - [Class 2 Damage Resistance](#class-2-damage-resistance)
+        - [Class 3 Status Effects.](#class-3-status-effects)
+        - [Class 4 Healing Spells](#class-4-healing-spells)
+        - [Class 5 Projectiles](#class-5-projectiles)
+        - [Class 6 Area Effects](#class-6-area-effects)
+        - [Class 7 Targetted Spells](#class-7-targetted-spells)
+        - [Class 8 Spells Summoning](#class-8-spells-summoning)
+        - [Class A Mana Restore](#class-a-mana-restore)
+        - [Class B Misc Spells](#class-b-misc-spells)
+        - [Class D Misc Spells](#class-d-misc-spells)
+          - [Class D Subclass 0  Altaras Wand Spell](#class-d-subclass-0--altaras-wand-spell)
+          - [Class D Subclass 3,4,5 Basilisk Oil](#class-d-subclass-345-basilisk-oil)
+          - [Class D Subclass 7 Map Area](#class-d-subclass-7-map-area)
+        - [Class D Subclass 8 Acid Spit](#class-d-subclass-8-acid-spit)
+        - [Class E Spells Cutscenes](#class-e-spells-cutscenes)
+      - [Runic Spells](#runic-spells)
+      - [Enchanted Items](#enchanted-items)
+    - [Survival Mechanics](#survival-mechanics)
+      - [Sleeping](#sleeping)
+      - [Food](#food)
+      - [Death and Resurrection](#death-and-resurrection)
+      - [Intoxication](#intoxication)
+    - [Game Clock and Time](#game-clock-and-time)
+  - [Objects](#objects)
+    - [General Object Overview](#general-object-overview)
+    - [Special Objects](#special-objects)
+      - [Guardian Signet Ring](#guardian-signet-ring)
+      - [Data Storage Crystal](#data-storage-crystal)
+    - [Traps \& Triggers](#traps--triggers)
+      - [Traps](#traps-1)
+        - [a\_arrow trap](#a_arrow-trap)
+        - [a\_bridge trap](#a_bridge-trap)
+        - [a\_change from trap](#a_change-from-trap)
+        - [a\_change to trap](#a_change-to-trap)
+        - [a\_change terrain trap](#a_change-terrain-trap)
+        - [a\_check variable trap](#a_check-variable-trap)
+        - [a\_combination trap](#a_combination-trap)
+        - [a\_create object trap](#a_create-object-trap)
+        - [a\_damage trap](#a_damage-trap)
+        - [a\_delete object trap](#a_delete-object-trap)
+        - [a\_do trap or a\_hack\_trap](#a_do-trap-or-a_hack_trap)
+          - [Camera Trap](#camera-trap)
+          - [Platform Trap](#platform-trap)
+          - [Trespass Trap](#trespass-trap)
+          - [Class Object Trap](#class-object-trap)
+          - [Fraznium Forcefield](#fraznium-forcefield)
+          - [Unused Oscillating Trap](#unused-oscillating-trap)
+          - [Colour Cycling Trap](#colour-cycling-trap)
+          - [Ice Floor Collapse Trap](#ice-floor-collapse-trap)
+          - [Switch Puzzle Reset Trap](#switch-puzzle-reset-trap)
+          - [Platform Puzzle Reset Trap](#platform-puzzle-reset-trap)
+          - [Rising Platforms Trap](#rising-platforms-trap)
+          - [Loth Tomb Switches](#loth-tomb-switches)
+          - [TMAP Change Trap](#tmap-change-trap)
+          - [Bullfrog Trap](#bullfrog-trap)
+          - [Change Graffiti Trap](#change-graffiti-trap)
+        - [Bullfrog Puzzle Traps](#bullfrog-puzzle-traps)
+          - [Bly Skup Chamber Trap](#bly-skup-chamber-trap)
+          - [Scintillus Force Field Trap](#scintillus-force-field-trap)
+          - [Change Object Quality Trap](#change-object-quality-trap)
+          - [Change TMAP Trap](#change-tmap-trap)
+          - [Random Button Flicking Trap](#random-button-flicking-trap)
+          - [Avatar is a Coward Trap](#avatar-is-a-coward-trap)
+          - [Arena of Fire Safety Trap](#arena-of-fire-safety-trap)
+          - [QBert Puzzle Trap.](#qbert-puzzle-trap)
+          - [Bottle Recycler Trap](#bottle-recycler-trap)
+          - [The Castle Goes Dry Trap](#the-castle-goes-dry-trap)
+          - [Light Sphere Recharge Trap](#light-sphere-recharge-trap)
+          - [Britannia NPC Teleport](#britannia-npc-teleport)
+          - [Unknown Trap 37](#unknown-trap-37)
+          - [Spoil Healing Potion Trap](#spoil-healing-potion-trap)
+          - [Change Visibility Trap](#change-visibility-trap)
+          - [Vending Machine Selection Trap](#vending-machine-selection-trap)
+          - [Emerald Puzzle Trap](#emerald-puzzle-trap)
+          - [Vending Machine Spawning Trap](#vending-machine-spawning-trap)
+          - [Vending Machine Sign Trap](#vending-machine-sign-trap)
+          - [A Talking Door!](#a-talking-door)
+          - [Change NPC Goal Trap](#change-npc-goal-trap)
+          - [Sleep Trap](#sleep-trap)
+          - [Unknown Automap Trap](#unknown-automap-trap)
+          - [Start Conversation Trap](#start-conversation-trap)
+          - [Gem Face Rotate](#gem-face-rotate)
+          - [World Teleport Trap](#world-teleport-trap)
+          - [Unknown AI Goal Trap 62](#unknown-ai-goal-trap-62)
+          - [End Game Trap](#end-game-trap)
+        - [a\_door trap](#a_door-trap)
+        - [a\_flam rune](#a_flam-rune)
+        - [a\_jump trap](#a_jump-trap)
+        - [a\_null trap](#a_null-trap)
+        - [a\_pit trap](#a_pit-trap)
+        - [a\_proximity trap](#a_proximity-trap)
+        - [a\_set variable trap](#a_set-variable-trap)
+        - [a\_skill trap](#a_skill-trap)
+        - [a\_special effects trap](#a_special-effects-trap)
+        - [a\_spelltrap](#a_spelltrap)
+        - [a\_teleport trap](#a_teleport-trap)
+        - [a\_text string trap](#a_text-string-trap)
+        - [a\_tym rune](#a_tym-rune)
+        - [a\_ward trap or a\_tell trap](#a_ward-trap-or-a_tell-trap)
+        - [an\_experience trap](#an_experience-trap)
+        - [an\_inventory trap](#an_inventory-trap)
+        - [an\_oscillator trap](#an_oscillator-trap)
+      - [Triggers](#triggers)
+        - [a\_close trigger](#a_close-trigger)
+        - [a\_look trigger](#a_look-trigger)
+        - [a\_move trigger](#a_move-trigger)
+        - [a\_pick up trigger](#a_pick-up-trigger)
+        - [a\_pressure release trigger](#a_pressure-release-trigger)
+        - [a\_pressure trigger](#a_pressure-trigger)
+        - [a\_scheduled trigger](#a_scheduled-trigger)
+        - [a\_step on trigger](#a_step-on-trigger)
+        - [a\_timer trigger](#a_timer-trigger)
+        - [a\_use trigger](#a_use-trigger)
+        - [an\_enter trigger](#an_enter-trigger)
+        - [an\_exit trigger](#an_exit-trigger)
+        - [an\_open trigger](#an_open-trigger)
+        - [an\_unlock trigger](#an_unlock-trigger)
+  - [Quests](#quests)
+    - [``UW1`` Quests](#uw1-quests)
+    - [``UW2`` Quests](#uw2-quests)
+      - [The X Clock](#the-x-clock)
   - [Game worlds and Levels](#game-worlds-and-levels)
     - [``UW1`` Levels](#uw1-levels)
       - [``Tybal's Lair``](#tybals-lair)
@@ -55,6 +245,10 @@ Also referenced
 https://wiki.ultimacodex.com/wiki/Ultima_Underworld_internal_formats (unknown authors)
 
 #### Credits
+The following credits are taken verbatim from the files shared by named projects.
+
+The "me" mentioned in the credits is not the author of this guide.
+
 ##### UW-Formats.txt from tthe Abysmal Project
    My thanks go out to Jim Cameron that started the original "uw-specs.txt"
    file and subsequently found out more unknown data structures and discussed
@@ -80,7 +274,7 @@ https://wiki.ultimacodex.com/wiki/Ultima_Underworld_internal_formats (unknown au
    Copyright (c) 2002,2003,2004 Michael Fink
    Copyright (c) 2004 Kasper Fauerby
 
-##### Credits from the Underworld Adventures Prject
+##### Credits from the Underworld Adventures Project
    My thanks go out to Jim Cameron that started the original "uw-specs.txt"
    file and subsequently found out more unknown data structures and discussed
    about file formats with me. Many thanks, Jim!
@@ -140,7 +334,6 @@ Sections of the document that are taken wholesale from uwformats.txt are prepend
 In a typical ``UUW`` installation the following files will be present
 
 TODO: Insert table here. With brief file overview
-
 
 ### Tilemap and Object List
 
@@ -547,7 +740,7 @@ From UWFormats:
         MA[i*7] = MS;
     }
 
-    ```
+```
 
    Notes on filling the MA bytes:
      - not resetting MS between loops is intentional.
@@ -1854,9 +2047,15 @@ Each possible value of "quality type" maps onto a group of 6 strings in block 4 
 
 #### 3D Models
 
+TODO: UWformats.txt deals with this topic better than I could.
+
 #### Cutscenes
 
-#### Scheduled Events (*SCD.ARK*)
+### Dungeon Light Levels (*dl.dat*)
+In ``UW2`` there is an additional data file called dl.dat. This file contains 80 entries of int8 values.
+The entires correspond to the game levels and define the default light level for the maps.
+
+### Scheduled Events (*SCD.ARK*)
 
 ## Game Mechanics
 ### RNG
@@ -1924,7 +2123,9 @@ score = (skill-difficulty)+ rng (0-30d)
   return result;
 ```
 
+
 #### Specific Skills
+
 ##### Attack
 ##### Defence
 ##### Unarmed
