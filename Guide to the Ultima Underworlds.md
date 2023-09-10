@@ -9,6 +9,7 @@
         - [Other contributions](#other-contributions)
   - [Terminology and Conventions](#terminology-and-conventions)
   - [Differences Between ``UW1`` and ``UW2``](#differences-between-uw1-and-uw2)
+    - [The Worlds and Level Concept](#the-worlds-and-level-concept)
   - [Common Elements between ``UW1`` and ``UW2``](#common-elements-between-uw1-and-uw2)
   - [File Formats](#file-formats)
     - [File List](#file-list)
@@ -310,6 +311,8 @@ Bits fields are referred to as zero based. Eg bit 0 is the first bit in a value.
 
 Sections of the document that are taken wholesale from uwformats.txt are prepended with the text **UWFormats.txt:**
 
+Division calculations, unless otherwise specified return the quotient of the calculation.
+
 ## Differences Between ``UW1`` and ``UW2``
 * ``UW2`` uses a compressed ``lev.ark`` file. 
 * ``UW2`` has a different lev.ark block structure.
@@ -322,6 +325,27 @@ Sections of the document that are taken wholesale from uwformats.txt are prepend
 * ``UW2`` has a concept of grouping blocks of 8 levels in to worlds. These worlds may share common hard coded behaviours and events.
 * ``UW2`` has additional traps, triggers and conversation functions.
 * ``UW2`` handles naming of floor and wall textures differently.
+
+### The Worlds and Level Concept
+
+For various calculations such as skill checks the difficulty of the skill check is given by level number. This is simple enough in ``UW1`` where there are only levels 1 to 9. However ``UW2`` can support up to 80 levels (in reality the actual implemented number of levels is about 43). To handle this the game splits the levels into logical groups of 8 level slots for each world. Eg Britannia levels are potentially levels 1 to 8, Prison Tower 9 to 16 and so on.
+
+| World Number | World         | Starting Level |
+|--------------|---------------|----------------|
+| 0            | Britannia     | 1              |
+| 1            | Prison Tower  | 9              |
+| 2            | Killorn       | 17             |
+| 3            | Ice           | 25             |
+| 4            | Talorus       | 33             |
+| 5            | Academy       | 41             |
+| 6            | Tombs         | 49             |
+| 7            | Pits          | 57             |
+| 8            | Ethereal      | 65             |
+
+The world number for a level can be found by dividing the (level number minus 1) by 8.
+
+So for an arbritary skill check in ``UW1`` the difficulty could be given by a calculation that is X + level no where the equivalent formula in ``UW2`` is given by x + (level no-1)/8.
+
 
 ## Common Elements between ``UW1`` and ``UW2``
 * Most game mechanics eg combat is the same.
@@ -2160,11 +2184,26 @@ The casting skill check can have 3 results.
 ##### Traps
 Used for disarming traps.
 
-Skill is used when interacting with an object that is linked to a ``Damage Trap``. 
+Skill is used when interacting with an object that is linked to a ``Damage Trap``. The trap can be any of the objects in the linked object chain. Not just the directly linked object
 
-The ``Search`` skill is used to find the traps. To Confirm is this correct?
+In``UW2`` trap difficulty is given by the formula.
 
-TODO More detail here and confirm again
+```
+=
+Skill check Result = trap skill vs  (((dungeon level-1)/8) * 2 + 8)
+```
+
+Possible outcomes
+
+| Skill check result | Event            |
+|--------------------|------------------|
+| Crit Success       | Trap disarmed    |
+| Success            | Trap disarmed    |
+| Fail               | Unable to defuse |
+| Crit Fail          | Trap goes off    |
+
+
+The ``Search`` skill is used to find the traps. See below
 
 ##### Search
 The ``Search`` skill is evaluated when looking at objects that are linked to a ``Look Trap`` when the look trap has a ??? value set. A skill check is performed against the look skill and if passed the trigger linked to the ``Look Trap`` is executed.
@@ -2175,11 +2214,14 @@ It is also used to detect traps as follows
 In ``UW2`` the difficulty of this skill check is based on the ``dungeon_level`` the player is on.
 
 ```
-World Number = (((dungeon level-1)/8)<<1 + 0xA)
-Skill check Result = search skill vs WorldNumber+10
+=
+Skill check Result = search skill vs  (((dungeon level-1)/8) * 2 + 10)
 ```
 
-TODO confirm how this works in ``UW1``
+TODO confirm how this works in ``UW1`` but presumably
+```
+Skill check Result = search skill vs  ((dungeon level-1) * 2 + 10)
+```
 
 
 ##### Track
@@ -2691,8 +2733,14 @@ Creates a new object using the object referenced by the ``link`` field as a temp
 TODO: This trap has a random chance of running when sleeping to spawn monsters. Reconfirm the behaviour here.
 
 ##### a_damage trap
-TODO: Reconfirm. Use to apply a change in ``hp`` or to poison the player.
 
+The damage trap is a trap that either causes direct damage or poison damage to to the player.
+
+When the ``Owner`` value is 0 the trap is causes damage, when it is not zero it is a poisoning trap. In either case the damage or level of poison applied is given by the ``quality`` field. 
+
+If already poisoned the new poison level is set the value. It will however not reduce the poison level from a higher one. 
+
+Note if the player has a vulnerability to poisoning then double poisoning will apply. I'm not sure if the player has this vulnerability defined in the adventurer critter data or if there is a way to become vulnerable to poison but the code for this is present.
 
 ##### a_delete object trap
 Removes the object pointed to in the ``link`` field from the world.
@@ -2705,7 +2753,7 @@ The ``quality`` value defines what the trap is.
 ###### Camera Trap
 ``Quality`` 2
 
-Moves the game camera to the location and points it in the direction of the trap.
+Moves the game camera to the trap location and points it in the direction given by the traps ``heading``
 
 ###### Platform Trap
 ``Quality`` 3
@@ -2719,7 +2767,7 @@ Flags illegal activity to a particular race.
 
  Eg when the avatar enters an area they are not allowed enter the move trigger may trigger a trespass trap that angers nearby creatures if a ``stealth`` check is failed
 
-TODO: Clarify details
+TODO: Clarify details. example usage ``Prison Tower``
 
 ###### Class Object Trap
 ``Quality`` 10
