@@ -3133,7 +3133,7 @@ A small amount of damage may also be applied to the create. TO CONFIRM
 
 ##### an_experience trap
 A trap that will increase or decrease the experience points for the player.
-TODO: Exact math involved here.
+TODO: Exact math involved here. Based off of owner and quality
 
 ##### an_inventory trap
 A trap that will check the player inventory for a specific item
