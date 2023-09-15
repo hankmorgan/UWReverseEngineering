@@ -2,11 +2,12 @@
 
 - [Guide to the Ultima Underworlds](#guide-to-the-ultima-underworlds)
   - [Introduction](#introduction)
-    - [Contributors](#contributors)
+    - [Sources](#sources)
+      - [Also referenced](#also-referenced)
       - [Credits](#credits)
-        - [UW-Formats.txt from tthe Abysmal Project](#uw-formatstxt-from-tthe-abysmal-project)
+        - [Credits from the Abysmal Project](#credits-from-the-abysmal-project)
         - [Credits from the Underworld Adventures Project](#credits-from-the-underworld-adventures-project)
-        - [Other contributions](#other-contributions)
+        - [Other contributions to this document](#other-contributions-to-this-document)
   - [Terminology and Conventions](#terminology-and-conventions)
   - [Differences Between ``UW1`` and ``UW2``](#differences-between-uw1-and-uw2)
     - [The Worlds and Level Concept](#the-worlds-and-level-concept)
@@ -45,6 +46,7 @@
     - [Scheduled Events (*SCD.ARK*)](#scheduled-events-scdark)
   - [Game Mechanics](#game-mechanics)
     - [RNG](#rng)
+    - [Leveling Up and Experience Points](#leveling-up-and-experience-points)
     - [Attributes](#attributes)
       - [Strength](#strength)
       - [Intelligence](#intelligence)
@@ -240,20 +242,25 @@
 
 
 ## Introduction
-This document is a collection of documentation about the file formats and game mechanids for the Ultima Underworld (UW) series of games. 
+This document is a collection of documentation about the file formats and game mechanics for the Ultima Underworld (UW) series of games. 
 
-### Contributors
+### Sources
 The information in this document is gathered from a number of sources most notably the vernable uw-formats.txt. Sections of this document if not taken directly from UW-Formats.txt are heavily based on the work that has gone into that document by a number of contributors and groups over the years. Every effort is being made to list this contributions here. To avoid missing anyone I am quoting verbatim the credit section of each copy of uw-formats.txt I can referencing.
 
-Also referenced
-https://wiki.ultimacodex.com/wiki/Ultima_Underworld_internal_formats (unknown authors)
+Unfortunately some information sources have been lost to me over time. If I have missed a reference or not given due credit for research or code examples then please let me know and I will happily correct the record.
+
+#### Also referenced
+
+Unknown authors [Internal Formats on the Ultima Codex](https://wiki.ultimacodex.com/wiki/Ultima_Underworld_internal_formats) 
+
+Mitch Aigner FAQs for [UW1](https://gamefaqs.gamespot.com/pc/562665-ultima-underworld-the-stygian-abyss/faqs/1811) abd [UW2](https://gamefaqs.gamespot.com/pc/564592-ultima-underworld-ii-labyrinth-of-worlds/faqs/1813)
 
 #### Credits
 The following credits are taken verbatim from the files shared by named projects.
 
 The "me" mentioned in the credits is not the author of this guide.
 
-##### UW-Formats.txt from tthe Abysmal Project
+##### Credits from the Abysmal Project
    My thanks go out to Jim Cameron that started the original "uw-specs.txt"
    file and subsequently found out more unknown data structures and discussed
    about file formats with me. Many thanks, Jim!
@@ -300,8 +307,9 @@ The "me" mentioned in the credits is not the author of this guide.
    Copyright (c) 2002,2003,2004 Michael Fink
    Copyright (c) 2004 Kasper Fauerby
 
-##### Other contributions
+##### Other contributions to this document
 [KarlClinckspoor](https://github.com/KarlClinckspoor) on ``cmb.dat``
+
 
 ## Terminology and Conventions
 ``UUW`` - Ultima Underworld, take this to mean both the Underworld games
@@ -385,7 +393,7 @@ From UW Formats:
    the first byte)
 
 
-```
+```c#
 int NoOfEncryptedBytes = 0xD2;
 int xOrValue = buffer[0];
 int incrnum = 3;
@@ -744,7 +752,7 @@ From UWFormats:
 
    Magic Array (MA) fill algorithm:
 
-```
+```c#
     MS += 7;
     for (i = 0; i<80; ++i)
     {
@@ -2088,6 +2096,73 @@ The entires correspond to the game levels and define the default light level for
 ### RNG
 RNG is based on the game time that the game has started at.
 
+### Leveling Up and Experience Points
+Levelling up and Experience(EXP) can be more complex than expected.
+
+From Mitch Aigner's FAQ level ups occur at the below thresholds. I'm unsure if the skill point per exp is correct. Disassmembly of the ``UW2`` experience functions seem to indicate that the EXP gain is based on the new player level. Level 2 - 2 points, level 3 - 3 points etc but this needs to be properly tested. (it's possible both facts are true, points per exp gain and points per level gained.)
+
+| Level |  Exp. Points |   Exp./Skill pt. |
+|-------|--------------|------------------|
+|1      |     0        |   50             | 
+|2      |    50        |                  |
+|3      |   100        |                  |
+|4      |   150        |                  |
+|5      |   200        |                  |
+|6      |   300        |  100             |
+|7      |   400        |                  |
+|8      |   600        |                  |
+|9      |   800        |                  |
+|10     |  1200        |  150             |
+|11     |  1600        |                  |
+|12     |  2400        |                  |
+|13     |  3200        |                  |
+|14     |  4800        |                  |
+|15     |  6400        |                  |
+
+
+Experience is known to increase and decrease in the following circumstances
+
+* Killing an NPC.
+* Finding a map piece in Loth's tomb (xp gain is world number + 1)
+* When visiting new maps (mechanic not fully understood but appears to be linked to character level). A good example of this in action is if you run from level 1 of ``UW`` straight to level 2. Enough exp for a level gain occurs without any combat.
+* In conversations using the ``x_exp`` ``imported function``.
+* Change in the ``new_player_exp`` ``imported variable`` after a conversation
+* Special death case when killing Fissif. (Possibly you can beat him up and he'll surrender to go to jail) TODO test this
+* When player is sent to jail in Brittania. Appears to be 1/9th of Exp
+* When player is resurrected. Also appears to be 1/9th of Exp
+* From the action of ``an_experience_trap``
+
+
+It's expected normally that Exp gains are just based on the Exp reward defined in the ``objects.dat`` for the npc. However a number of factors modify this value.
+
+Random 2D dice roll is made to modify the Exp value.
+```c#
+return 2Dexp + (exp * 4);
+```
+
+If the npc killed is powerful; then the Exp reward is increased by a calculation (TODO confirm calculation here)
+
+However any exp reward (from any exp gain source) appears to be reduced when a calculation based on the current map level no is compared with the player level. This appears to indicate that going back to earlier levels to defeat enemies is less rewarding for EXP then killing them at a lower character level. This needs to be tested more.
+
+```c#
+
+int x = dungeonlevel-1;
+x = x / 8; //This is the UW2 world calculation. Assume UW1 is just dungeonlevel -1
+x = x * 2;
+x = x + 2;
+if (x < charlevel)
+  {
+    ExpGain = (ExpGain/2) + 1
+  }
+```
+
+The game supports negative Exp changes but these are clamped at 0.
+Negative exp changes will not affect skill points or change the character level. There is a 50:50 chance that a negative skillchange will have + 1 added to it for an unknown purpose.
+
+When the player is arrested in Britannia the exp is reduced by 1/9th (TODO confirm) of the current player Exp.
+
+
+
 ###  Attributes
 #### Strength
 ``Strength`` is used for the following calculations
@@ -2128,8 +2203,8 @@ The score value is compared to a range of values to give one of 4 skill check re
 | >29          | Critical Success | 2            |
 
 
-```
-score = (skill-difficulty)+ rng (0-30d)
+```c#
+score = (skill-difficulty)+ rng (0-30d);
 
   if (score < 0x1d) {
     if (score < 0x10) {
@@ -2191,9 +2266,8 @@ Skill is used when interacting with an object that is linked to a ``Damage Trap`
 
 In``UW2`` trap difficulty is given by the formula.
 
-```
-=
-Skill check Result = trap skill vs  (((dungeon level-1)/8) * 2 + 8)
+```c#
+Result = TrapSkill vs  (((DungeonLevel-1)/8) * 2 + 8)
 ```
 
 Possible outcomes
@@ -2216,14 +2290,13 @@ It is also used to detect traps as follows
 
 In ``UW2`` the difficulty of this skill check is based on the ``dungeon_level`` the player is on.
 
-```
-=
-Skill check Result = search skill vs  (((dungeon level-1)/8) * 2 + 10)
+```c#
+Result = SearchSkill vs  (((DungeonLevel-1)/8) * 2 + 10)
 ```
 
 TODO confirm how this works in ``UW1`` but presumably
-```
-Skill check Result = search skill vs  ((dungeon level-1) * 2 + 10)
+```c#
+Result = SearchSkill vs  ((DungeonLevel-1) * 2 + 10)
 ```
 
 
@@ -2245,7 +2318,7 @@ Checked when the player performs a ``repair`` on an object using an ``anvil``. U
 
 The difficulty estimate of the ``repair`` is based on the items ``durability`` which is used in the below pseudocode to return a string number offset for the estimate. Possible string values trivial (0), simple(1), possible(2), hard(3) and very difficult(4)
 
-```
+```c#
 score = repair - durability + 15d
 if (score<0)
   {
@@ -2265,7 +2338,7 @@ if (score<0)
 ```
 
 When the ``repair`` takes place an addition of time of up to 15 minutes is added to the ``game clock``.
-```
+```c#
 RepairTime = ((durability*3)-RepairSkill) - (quality/2)
 if (RepairTime>15)
   {
@@ -2280,7 +2353,7 @@ The result of the ``repair`` is a skillcheck of the item ``durability`` vs the `
 * Failure. No change is made to the ``quality``
 * Critical Failure. A formula is used to calculate the damage. See below
 
-```
+```c#
 if ( rng(0-63) <= quality + RepairSkill )
   {
      Damage =  4 + rng(0-7)
@@ -2554,7 +2627,7 @@ The spell will not work if cast in the ``Ethereal Void``
 
 The player ``casting`` skill controls how much of the map is revealed. See calculation.
 
-```
+```c#
 int a;
 if (casting <= 16)
 {
@@ -2627,7 +2700,7 @@ It can be observed to have the following properties for each character. Starting
 * Char 3 - increment by 1
 
 This pseudocode can return the proper label value
-```
+```c#
 var seed = (73-Quality)*2;
 char[]Label = new char[4];
 for (int c = 0; c<4; c++)
@@ -3133,7 +3206,24 @@ A small amount of damage may also be applied to the create. TO CONFIRM
 
 ##### an_experience trap
 A trap that will increase or decrease the experience points for the player.
-TODO: Exact math involved here. Based off of owner and quality
+
+The exp change here is based off a formula involving the owner and quality of the trap
+
+```c#
+ìnt q = quality << 3; // or quality * 8
+int o = owner & 7; // gives a owner value range of 0-7
+int x = o + q; 
+x = x - 100;
+
+int s = owner >> 3;
+int y = 1 << s;
+
+return x * y  // The range of possible values are -255 to + 255
+```
+
+A ``quality`` value of 31 or less means the result will always be negative which causes a negative ``experience`` change by that amount
+
+See also  section on ``Leveling Up`` 
 
 ##### an_inventory trap
 A trap that will check the player inventory for a specific item
@@ -3381,7 +3471,8 @@ Some NPCs have special logic for when they die. Normally for setting quest flags
 | ``UW2``    |              |  Mors Gothri             | Mors dies twice. The first time she escapes and the spell book is available. Second time triggers her death conversation       | 
 | ``UW2``    |              |  Demon Guard             | When this NPC dies the first time they will transform into a demon with full health.                                           | 
 | ``UW2``    |              |  Relk                    | TODO                                                                                                                           | 
-| ``UW2``    |              |  The Listener            | If this NPC is killed by any weapon (last hit only) other than the jewelled dagger it will have it's health restored to full   | 
+| ``UW2``    |              |  Fissif                  | Initiates a special dying conversation , awards 30 exp                                                                         | 
+| ``UW2``    |              |  The Listener            | If this NPC is killed by any weapon (last hit only) other than the jewelled dagger it will have it's health restored to full. On death set the relevant quest flag   | 
 
 
 ### ``UW2`` Castle Schedule
