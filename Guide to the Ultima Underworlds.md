@@ -118,6 +118,7 @@
     - [Special Objects](#special-objects)
       - [Guardian Signet Ring](#guardian-signet-ring)
       - [Data Storage Crystal](#data-storage-crystal)
+      - [Turbo Lotus Esprit](#turbo-lotus-esprit)
     - [Traps \& Triggers](#traps--triggers)
       - [Traps](#traps-1)
         - [a\_arrow trap](#a_arrow-trap)
@@ -207,6 +208,7 @@
         - [an\_exit trigger](#an_exit-trigger)
         - [an\_open trigger](#an_open-trigger)
         - [an\_unlock trigger](#an_unlock-trigger)
+        - [a\_step on trigger](#a_step-on-trigger-1)
   - [Quests](#quests)
     - [``UW1`` Quests](#uw1-quests)
     - [``UW2`` Quests](#uw2-quests)
@@ -222,7 +224,8 @@
         - [QBert Puzzle.](#qbert-puzzle)
   - [NPCS](#npcs)
     - [NPC Basics](#npc-basics)
-    - [AI Goals](#ai-goals)
+    - [AI Goals and Goal Targets](#ai-goals-and-goal-targets)
+    - [Special Death Cases](#special-death-cases)
     - [``UW2`` Castle Schedule](#uw2-castle-schedule)
   - [Strings](#strings)
     - [Decoding](#decoding)
@@ -2313,11 +2316,9 @@ Checked when the player lands after jumping or falling from a height. Skill chec
 Checked when standing on an unstable ice tile to see if the ice tile will collapse. See the Hack Trap/Ice Collapse Trap for details.
 
 
+TODO - Does this skill have an impact on jump distance
 
-
-To Confirm - Does this skill have an impact on jump distance
-
-To confirm - is there skill check critical results
+TODO - is there skill check critical results
 
 #### Appraise
 Use to evaluate the trade deal being currently offered in bartering
@@ -2646,6 +2647,9 @@ for (int c = 0; c<4; c++)
   return label.ToString();
 ```
 
+#### Turbo Lotus Esprit
+This is an easter egg object that is only present in the original floppy versions of UW2. It will not appear in later versions of the games even if the object is in the map.
+
 ### Traps & Triggers
 
 A trap is a special object that performs an operation on the game world when triggered. Triggers are special objects that are linked to a regular object or exist within the game world that when activated initiate the action of a trap. The trigger can contain paramters for the operation of the trap.
@@ -2659,7 +2663,7 @@ Example. A swich is connected to a use trigger which is connected to a door trap
 An arrow trap is used to fire projectiles. The item type created is controlled by the trap ``quality`` and ``owner`` values.	
 ``Item Type ID`` = (``quality`` << 5) | ``owner`` set in 
 
-The launch vector for the "arrow" is simply the heading of the trap.
+The launch vector for the "arrow" is simply the ``heading`` of the trap.
 
 ##### a_bridge trap
 Toggles the spawning and despawning of a row of bridges of length given by the trap  ``quality``.
@@ -3186,6 +3190,8 @@ A trigger that fires when a door is opened.
 ##### an_unlock trigger
 A trigger that fires when a door is unlocked.
 
+##### a_step on trigger
+``UW1`` only. Not sure if it is used ut I believe it fires when a tile floor is stepped on.
 
 ## Quests
 ### ``UW1`` Quests
@@ -3350,14 +3356,37 @@ TODO: Write up how the arena works.
 #### The ``Ethereal Void``
 
 ##### QBert Puzzle.
-TODO Document this puzzle
+TODO Document this puzzle in full. It is very complex
 
 ## NPCS
 ### NPC Basics
 
-### AI Goals
+NPCs are a form of mobile object. The format of their mobile object data is different from that of the projectile type mobile objects and includes information for pathing, behaviours and additional NPC specific attributes such as flagging the NPC as powerful.
+
+### AI Goals and Goal Targets
+NPCS AI actions are controlled by a number of values. The ``Goal`` and the ``GTarg`` (Goal Target) are the most often used. The ``GTarg`` refers to an object list index number and is normaly either 0 (no target) or 1 (target the player). However it is possible for the target to be another NPC.
+
+To target a tile (eg as a move destination) the HomeX or TargetX and HomeY or TargetY (TODO naming) values give the tile the NPC is to move to. The home tiles being where the NPC "hangs out" and the target tiles being where the NPC will accomplish their current goal from.
+
+TODO List goals
+
+### Special Death Cases
+Some NPCs have special logic for when they die. Normally for setting quest flags. The ``WhoAmI`` value is normally used here
+
+| Game       | WhoAmI       | NPC Details              |  Notes                                                                                                                         |
+|------------|--------------|--------------------------|--------------------------------------------------------------------------------------------------------------------------------|
+| ``UW1``    |              |  Gazer in the mines      | The relevant quest flag is set                                                                                                 |
+| ``UW1``    |              |  Rodric                  | The relevant quest flag is set                                                                                                 |
+| ``UW2``    |              |  Pit Warriors            | When these NPCs die the win-loss record is updated for the pits                                                                |
+| ``UW2``    |              |  Mors Gothri             | Mors dies twice. The first time she escapes and the spell book is available. Second time triggers her death conversation       | 
+| ``UW2``    |              |  Demon Guard             | When this NPC dies the first time they will transform into a demon with full health.                                           | 
+| ``UW2``    |              |  Relk                    | TODO                                                                                                                           | 
+| ``UW2``    |              |  The Listener            | If this NPC is killed by any weapon (last hit only) other than the jewelled dagger it will have it's health restored to full   | 
+
 
 ### ``UW2`` Castle Schedule
+
+The Castle schedule in ``UW2`` is hard coded (for the most part) and is based on factors like progression in the plot (see ``xclock`` 1) and scheduled triggers for some events where a NPC needs to be moved to a specific location. Eg the castle murders.
 
 ## Strings
 ### Decoding
