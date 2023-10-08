@@ -42,7 +42,10 @@
       - [Bitmaps](#bitmaps)
       - [3D Models](#3d-models)
       - [Cutscenes](#cutscenes)
-    - [Dungeon Light Levels (*dl.dat*)](#dungeon-light-levels-dldat)
+    - [Dungeon Light Levels](#dungeon-light-levels)
+      - [Light.dat and Mono.dat](#lightdat-and-monodat)
+      - [Shades.dat](#shadesdat)
+      - [Dl.dat](#dldat)
     - [Scheduled Events (*SCD.ARK*)](#scheduled-events-scdark)
   - [Game Mechanics](#game-mechanics)
     - [RNG](#rng)
@@ -2086,9 +2089,59 @@ TODO: UWformats.txt deals with this topic better than I could.
 
 #### Cutscenes
 
-### Dungeon Light Levels (*dl.dat*)
-In ``UW2`` there is an additional data file called dl.dat. This file contains 80 entries of int8 values.
-The entires correspond to the game levels and define the default light level for the maps.
+### Dungeon Light Levels
+
+#### Light.dat and Mono.dat
+Lighting in Underworld is achieved by the use of light maps which are used to map the appropiately shaded colours from the palette based on the current light level.
+
+There 16 different lightmaps that are stored in the files ``light.dat`` and ``mono.dat``  (mono.dat is used for the invisibility spell).
+Each light map is 256 bytes long and stores the value to lookup in the main palette.
+
+A pixel on a sprite or texture maps first to the value in the lightmap and then that value is used to look up the main palette.
+
+From ``UWFormats.txt``:
+   Palette mappings for different light/darkness levels are stored in the
+   file "light.dat". The file consists of 16 blocks of palette mappings. Each
+   block contains 256 Int8 values which map colors to their palette indices in
+   the game palette. The first block is the mapping for original colors, and
+   the last one is for "almost black".
+
+   The file "mono.dat" contains palette mappings that maps colors to grayscale
+   values. It has the same format as the "light.dat" file and can be
+   interchanged to get a gray underworld look. It is used for the spell
+   "invisibility".
+
+#### Shades.dat
+The file shades.dat is used to control what light maps are used. The lookup index into this table is calculated from the player held light sources (value obtained from the light data table in ``objects.dat``), the ``dl.dat`` ambient light  or from the current magic light spell being cast. The highest active light value is used. 
+
+The table appears to define what lightmaps is used near to the player (their light source) and what lightmap this light will use at a distance far away from the player. 
+
+The table appears to have the following structure.
+
+12 entries of 8 bytes.
+Each entry appears to be 4 int16 values. 
+
+| Offset    | Description    |
+|-----------|----------------|
+|  0        | Near distance  |
+|  2        | Near lightmap  |
+|  4        | Far distance   |
+|  6        | Far lightmap   |
+
+
+It appears the game has constraints on what values can be used here. A far lightmap cannot be brighter than the near one. The far distance cannot be closer than the near distance. Otherwise a fully dark image is displayed.
+
+When the shades.dat file is missing or renamed the levels will be displayed in full bright.
+
+#### Dl.dat
+In ``UW2`` there is an additional data file called ``dl.dat``. This file contains 80 entries of int8 values.
+The entires correspond to the game levels and define the ambient light level for the maps, the light level that the level has when the player is not using a light source of their own.
+The value in dl.dat is used in conjunction with the light flag bit for the tile to calculate the actual ambient light level.
+
+The value in dl.dat is XOR'd with the light flag to give the light level to be used when standing in that tile.
+
+A good example of usage of this is in the castle in ``UW2``. Inside the main halls of the castle the light is bright but moving into the secret passages it becomes darker.
+
 
 ### Scheduled Events (*SCD.ARK*)
 
