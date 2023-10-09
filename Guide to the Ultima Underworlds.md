@@ -2112,21 +2112,40 @@ From ``UWFormats.txt``:
    "invisibility".
 
 #### Shades.dat
+
+> Below info may be slightly wrong.
+
 The file shades.dat is used to control what light maps are used. The lookup index into this table is calculated from the player held light sources (value obtained from the light data table in ``objects.dat``), the ``dl.dat`` ambient light  or from the current magic light spell being cast. The highest active light value is used. 
 
 The table appears to define what lightmaps is used near to the player (their light source) and what lightmap this light will use at a distance far away from the player. 
 
+The entries are equivilant to the below light spell levels
+
+| Entry   |  Light level    |
+|---------|-----------------|
+|  0      | Darkness        |
+|  1      | Burning Match   |
+|  2      | Candlelight     |
+|  3      | Light           |
+|  4      | Magic Lantern   |
+|  5      | Night Vision    |
+|  6      | Daylight        |
+|  7      | Sunlight        |
+
+
 The table appears to have the following structure.
 
-12 entries of 8 bytes.
-Each entry appears to be 4 int16 values. 
+8 entries of 12 bytes length
+Each entry appears to be 5 int16 values. 
 
-| Offset    | Description    |
-|-----------|----------------|
-|  0        | Near distance  |
-|  2        | Near lightmap  |
-|  4        | Far distance   |
-|  6        | Far lightmap   |
+| Offset(d) | Description          |  Notes                                                             |
+|-----------|----------------------|--------------------------------------------------------------------|
+|  0        | Near distance offset | The higher this value is the closer the darkness is to the camera  |
+|  2        | Light map            | Possibly the starting light map                                    | 
+|  4        | Step ?               | The stepping to increase the start light map by until reaching all dark |
+|  6        | cutoff distance?     | The distance to be rendered (tiles?) before going all dark         |
+|  8        | Flat shading dist?   | Usually equal to 16d but low values will shade the textures with a flat colour |
+|  10       | Unk                  | No obvious effect                                                   |
 
 
 It appears the game has constraints on what values can be used here. A far lightmap cannot be brighter than the near one. The far distance cannot be closer than the near distance. Otherwise a fully dark image is displayed.
