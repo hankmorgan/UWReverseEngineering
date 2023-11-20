@@ -1832,6 +1832,7 @@ From UWFormats:
 | 1000      | First Inventory object                                                                     |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | 1001      | First Inventory object                                                                     |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | 1002      | First Inventory object                                                                     |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+
 ### Object data ``objects.dat``
 
 UWFormats.txt: Object properties specific to a range of objects are stored in the file ``objects.dat``. The file contains several tables. Here is an overview:
@@ -1973,6 +1974,8 @@ TODO Double check the calculation.
 | Offset  |  Size         | Name                      | Notes                                         |
 |---------|---------------|---------------------------|-----------------------------------------------|
 | 0       | int8          | Nutrition                 | The amount of hunger reduction of a food item |
+
+When used with liquids a negative value is stored. In this case, minus this value is added to the player ``intoxication`` value.
 
 #### Trigger Type Table
 This table associates the various ``triggers`` with their general type to control the circumstances in which they fire.
@@ -2152,6 +2155,8 @@ It appears the game has constraints on what values can be used here. A far light
 
 When the shades.dat file is missing or renamed the levels will be displayed in full bright.
 
+It appears the step value is used to generate a 16 value array of lightmap indices. That array is then used to generate a 16x32 array of more precise shading presumably for the looking up values relative to the player camera. Values outside the cutoff distance will be shaded dark.
+
 #### Dl.dat
 In ``UW2`` there is an additional data file called ``dl.dat``. This file contains 80 entries of int8 values.
 The entires correspond to the game levels and define the ambient light level for the maps, the light level that the level has when the player is not using a light source of their own.
@@ -2244,7 +2249,15 @@ Max HP is ``30 + ((Strength * Char Level)/5)``
 Max Carry Weight is ``300 + (Strength * 13)``
 * Unit 0.1 Stones
 
-Strength controls resistance to intoxication.
+Strength controls resistance to intoxication. When alcohol is consumed a ``skill check`` of the intoxication level vs the strength score is rolled.
+The skill check can have the following results
+
+| Result       | Impact                                              |
+|--------------|-----------------------------------------------------|
+| Crit Fail    | Player passes out                                   |
+| Fail         | Screenshakes                                        |
+| Success      | Nothing                                             |
+| Crit Sucesss | Player heals by 2hp. Message about feeling better   |
 
 #### Intelligence
 ``Intelligence`` is used for the following calculations
