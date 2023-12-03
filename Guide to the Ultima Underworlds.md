@@ -2159,13 +2159,35 @@ It appears the step value is used to generate a 16 value array of lightmap indic
 
 #### Dl.dat
 In ``UW2`` there is an additional data file called ``dl.dat``. This file contains 80 entries of int8 values.
-The entires correspond to the game levels and define the ambient light level for the maps, the light level that the level has when the player is not using a light source of their own.
+The entries correspond to the game levels and define the ambient light level for the maps, the light level that the level has when the player is not using a light source of their own.
 The value in dl.dat is used in conjunction with the light flag bit for the tile to calculate the actual ambient light level.
-
-The value in dl.dat is XOR'd with the light flag to give the light level to be used when standing in that tile.
 
 A good example of usage of this is in the castle in ``UW2``. Inside the main halls of the castle the light is bright but moving into the secret passages it becomes darker.
 
+The shading to apply is calculated as follows
+
+```
+    var dungeon_ambientlight = DlDatValue;
+    var remainder = dungeon_ambientlight % 10;
+    var dlFlag = 0;
+    if (dungeon_ambientlight >=10)
+    {
+        dlFlag=1;
+    }
+    int tileLightFlag = TileMap.current_tilemap.Tiles[playerdat.tileX,playerdat.tileY].lightFlag;
+    if ((tileLightFlag ^ dlFlag) == 1)
+    {
+        dungeon_ambientlight = remainder;
+    }
+    else
+    {
+        dungeon_ambientlight = -1;
+    }                
+    if (dungeon_ambientlight>lightlevel)
+    {
+        lightlevel = dungeon_ambientlight;
+    }
+```
 
 ### Scheduled Events (*SCD.ARK*)
 
