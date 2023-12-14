@@ -2481,7 +2481,7 @@ No ingame usage but may be used in conversations ``imported functions``. No iden
 #### Lockpick
 Skill is checked when picking a lock using a lockpick. 
 
-The skill check is performed against a value 3 times the ``zpos`` value of any ``a_lock`` object linked to the locked door or chest.
+The skill check is ``lockpick`` + 1 vs 3 times the ``zpos`` value of any ``a_lock`` object linked to the locked door or chest.
 
 Possible results are
 * Critical Success and Success- Door is unlocked
