@@ -46,6 +46,7 @@
       - [Light.dat and Mono.dat](#lightdat-and-monodat)
       - [Shades.dat](#shadesdat)
       - [Dl.dat](#dldat)
+    - [Chrgen.dat](#chrgendat)
     - [Scheduled Events (*SCD.ARK*)](#scheduled-events-scdark)
   - [Game Mechanics](#game-mechanics)
     - [RNG](#rng)
@@ -2189,6 +2190,27 @@ The shading to apply is calculated as follows
     }
 ```
 
+### Chrgen.dat
+A data file containing the string numbers to be used during character generation.
+The header of the file contains the question string number and is of length 144 bytes
+
+Record format
+|Byte | Desc          |
+|-------|---------------|
+|0      | Question string no|
+|1-7    | Always 0      |
+|8      | No of answers |
+|9-17   | always 0      |
+
+The remainder of the file is the string numbers to be used to answer the corresponding question.
+Format is arrays of string numbers (int16s) terminated with 0. The arrays will be of size no Of Answers from the header.
+
+
+TODO confirm how it works with skills.dat for multiple skill questions.
+
+
+
+
 ### Scheduled Events (*SCD.ARK*)
 
 ## Game Mechanics
@@ -2255,8 +2277,8 @@ if (x < charlevel)
   }
 ```
 
-The game supports negative Exp changes but these are clamped at 0.
-Negative exp changes will not affect skill points or change the character level. There is a 50:50 chance that a negative skillchange will have + 1 added to it for an unknown purpose.
+The game supports negative Exp changes but these will never bring player exp negative.
+Negative exp changes will not affect skill points or change the character level. There is a 50:50 chance that a negative skill change will have + 1 added to it for an unknown purpose.
 
 When the player is arrested in Britannia the exp is reduced by 1/9th (TODO confirm) of the current player Exp.
 
