@@ -3521,7 +3521,7 @@ A trigger that fires when a door is unlocked.
 | 133         | How much Jospur owes you for   fighting in the pits                                                     |
 | 134         | The password for the ``Prison Tower``   (random value)                                                  |
 | 135         | Checked by goblin in sewers  (no of worms killed on level. At more than   8 they give you fish)         |
-| 143         | Set to 33 after first LB   conversation. Set to 3 during endgame (is this what triggers the cutscenes?) |
+| 143         | Set to 33 after first LB   conversation. Set to 3 during endgame (value-1 is the cutscene to play at conversation end, set back to  after cutscene has played) When set at endgame run the endgame sequence |
 
 
 #### The X Clock
