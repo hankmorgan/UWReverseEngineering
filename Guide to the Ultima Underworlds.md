@@ -2436,8 +2436,9 @@ TODO More detail on how this works
 
 ###### Fishing Skill Check
 
-``Track`` is also used for the skill check value when fishing. If (``Track``+7)/8 > RNG(0-3) then a fish can be caught (assuming there is inventory space).
+In ``UW2`` the ``Track`` skill is used when when fishing. If (``Track``+7)/8 >= RNG(0-4) then a fish can be caught (assuming there is inventory space).
 
+In ``UW1`` the ``Track`` skill is not used and instead it is a rng(0-4) roll. If that result is 0 then the fish can be caught.
 
 #### Sneak
 To confirm. Compared with a critter object properties value to see if they can become aware of the player. 
