@@ -3096,7 +3096,7 @@ Trap will change the ``owner`` value of the tmap.
 ###### Random Button Flicking Trap
 ``Quality`` 29
 
-This trap randomly flicks traps. Used in ``Talorus`` level 1.
+This trap randomly flicks buttons. Used in ``Talorus`` level 1.
 
 ###### Avatar is a Coward Trap
 ``Quality`` 30
@@ -3163,7 +3163,7 @@ Used to change the game variable that controls the currently selected vending ma
 
 Used for the emerald puzzle in the secret area on level 6 of ``UW1``
 
-Likely that this trap is hard coded. Checks for the presense of an emerald on 4 tiles and creates a TODO runestone as a reward.
+Likely that this trap is hard coded. Checks for the presense of an emerald on 4 tiles and creates a runestone as a reward.
 
 ###### Vending Machine Spawning Trap
 ``Quality`` 41
@@ -3333,7 +3333,7 @@ A special trap that is formed by the rune of warding spell.
 
 When an NPC collides with the trap a text message will inform the player that a creature has collided with the trap at a relavitve position to the player.
 
-A small amount of damage may also be applied to the create. TO CONFIRM 
+A small amount of damage may also be applied to the creature based on the ``casting`` skill.
 
 ##### an_experience trap
 A trap that will increase or decrease the experience points for the player.
