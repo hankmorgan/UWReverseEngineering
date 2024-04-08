@@ -84,6 +84,7 @@
       - [Attack To Hit Calculations](#attack-to-hit-calculations)
       - [Combat Damage Calculations](#combat-damage-calculations)
       - [Equipment Damage Calculations](#equipment-damage-calculations)
+      - [UW2 Accuracy/Damage Enchantment Bug](#uw2-accuracydamage-enchantment-bug)
       - [Missile Combat](#missile-combat)
     - [Magic](#magic)
       - [Spell classes](#spell-classes)
@@ -2549,13 +2550,41 @@ Slash, Bash and Stab
 TODO explain the 3x3 combat screen grid
 
 #### Swing Charge
+TODO explain min/max charge and how the charge is used to scale the damage applied.
 
 #### Attack To Hit Calculations
+Player base chance to hit is given by the following formula
+
+``attackscore =  WeaponSkill + (AttackSkill >> 1) + (DEXTERITY / 7)``
+
+If playing on easy difficulty a bonus of 7 is added to the score.
+
+When using a weapon that grants the accuracy bonus the attack score is increased by the following formula in UW1. (See below for enchantment bug in UW2)
+``bonus = 1 + SpellMinorClass & 0x7)``
+
+* Spell minorclass is the level of the spell starting at 1
+
+In ``UW2`` an additional bonus can be added by the valour spell. This bonus is given by the formula
+``ValourBonus = 10 + Casting/5``; 
+
+After totalling the base score and bonuses the hit is tested against the NPC's defence rating (commonobject.dat index 0x12) using the skillcheck function.
 
 #### Combat Damage Calculations
 
 #### Equipment Damage Calculations
 
+#### UW2 Accuracy/Damage Enchantment Bug
+In ``UW1`` accuracy enchantments increase the player tohit chance while damage enchantments increase the weapon damage.. Due to a bug in ``UW2`` these enchantments are applied incorrectly. This has the effect of the accuracy enchantments increasing weapon damage while the damage enchantments increase accuracy. The scores are calculated as follows
+```
+  if (enchant.SpellMinorClass < 4) //minor class 0-4 are displayed on equipment as accuracy bonuses
+  {
+      PlayerAttackDamage += (1 + enchant.SpellMinorClass << 1);
+  }
+  else
+  {
+      PlayerAttackAccuracy += ((enchant.SpellMinorClass << 1) - 7);
+  }
+```
 
 #### Missile Combat
 
