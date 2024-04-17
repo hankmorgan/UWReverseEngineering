@@ -244,6 +244,7 @@
   - [Unanswered Questions and Problems](#unanswered-questions-and-problems)
   - [Code Examples](#code-examples)
   - [Reverse Engineering](#reverse-engineering)
+  - [Trivia](#trivia)
 
 
 ## Introduction
@@ -3661,3 +3662,9 @@ The Castle schedule in ``UW2`` is hard coded (for the most part) and is based on
 
 
 ## Reverse Engineering
+
+## Trivia
+
+Here is some "fun" discoveries
+* Equiping the shield of very great toughness (link=717) in the primary hand allows the player to cast the on hit Unlocking spell in ``UW2`` when punching a door. Presumably other shield types or objects could cast other spells but no other instances of this bug have been discovered yet...
+* Throwing objects at buttons can trigger them at a distance.
