@@ -122,6 +122,7 @@
     - [Game Clock and Time](#game-clock-and-time)
   - [Objects](#objects)
     - [General Object Overview](#general-object-overview)
+      - [Door Spike](#door-spike)
     - [Special Objects](#special-objects)
       - [Guardian Signet Ring](#guardian-signet-ring)
       - [Data Storage Crystal](#data-storage-crystal)
@@ -2844,12 +2845,14 @@ The spell subclass controls the cutscene number to play and both fullscreen and 
 ## Objects
 
 ### General Object Overview
+#### Door Spike
+A door spike is only present in ``UW1``. The effect of a door spike is to change the ``owner`` value on a closed door to 63. As long as the value in bits 1-5 of owner are greater than 0 attacks to the door will apply half damage to it and subtract that damage from the ``owner`` value. Essentially giving the door a second health bar and damage reduction. After the ``owner`` value is cleared further damage will apply to the ``quality`` value.
 
 ### Special Objects
 A summary of some objects with special behaviours
 
 #### Guardian Signet Ring
-The guardian signet ring when invisible and has a ``Doordir`` value of 0 is used to mark a place of power for the wand of Altara spell.
+The guardian signet ring when invisible and that has a ``Doordir`` value of 0 is used to mark a place of power for the wand of Altara spell.
 
 #### Data Storage Crystal
 The text on the data crystal is set based on the crystal ``quality``.
