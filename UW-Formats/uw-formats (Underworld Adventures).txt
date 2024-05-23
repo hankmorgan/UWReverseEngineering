@@ -1072,8 +1072,8 @@ Table of Contents
    5b00    1800   static object information (objects 0100-03ff, 768 x 8 bytes)
    7300    01fc   free list for mobile objects (objects 0002-00ff, 254 x 2 bytes)
    74fc    0600   free list for static objects (objects 0100-03ff, 768 x 2 bytes)
-   7afc    0104   unknown (260 bytes)  The first 256 bytes appear to correspond to NPCs and mobile object lists. Each one appears once in the list. Code loops that processes mobiles use this list rather than the mobile object free list.
-   7c00    0002	  Maybe no of Npcs in the previous list. (loos like it is only updated on level transition)
+   7afc    0104   Active Mobile Object List (260 bytes)  The first 256 bytes appear to correspond to NPCs and mobile object lists. Each one appears once in the list. Code loops that processes mobiles use this list rather than the mobile object free list.
+   7c00    0002	  No of Npcs in the previous list minus 1.
    7c02    0002   no. entries in mobile free list minus 1
    7c04    0002   no. entries in static free list minus 1
    7c06    0002   0x7775 ('uw')
