@@ -2382,6 +2382,41 @@ The ``heading`` bits 0-1 are set with values as follows:
 
 Bit 2 is used to track if an identification attempt has been made. Value is set to 1 when the ``lore`` check is attempted. This prevents spamming ``lore`` checks when to brute-force identification. When the ``lore`` skill is increased this value is reset to 0 for all objects in the player inventory to allow re-examination.
 
+The following table lists the probabilities of each outcome depending on the player skill level
+
+| Player lore skill | Fully identified | Identified as being magical | Unidentified |
+|-------------------|------------------|-----------------------------|--------------|
+| 1                 | 0.0              | 22.58                       | 77.41        |
+| 2                 | 0.0              | 25.80                       | 74.19        |
+| 3                 | 0.0              | 29.03                       | 70.96        |
+| 4                 | 0.0              | 32.25                       | 67.74        |
+| 5                 | 0.0              | 35.48                       | 64.51        |
+| 6                 | 0.0              | 38.70                       | 61.29        |
+| 7                 | 0.0              | 41.93                       | 58.06        |
+| 8                 | 3.22             | 41.93                       | 54.83        |
+| 9                 | 6.45             | 41.93                       | 51.61        |
+| 10                | 9.67             | 41.93                       | 48.38        |
+| 11                | 12.90            | 41.93                       | 45.16        |
+| 12                | 16.12            | 41.93                       | 41.93        |
+| 13                | 19.35            | 41.93                       | 38.70        |
+| 14                | 22.58            | 41.93                       | 35.48        |
+| 15                | 25.80            | 41.93                       | 32.25        |
+| 16                | 29.03            | 41.93                       | 29.03        |
+| 17                | 32.25            | 41.93                       | 25.80        |
+| 18                | 35.48            | 41.93                       | 22.58        |
+| 19                | 38.70            | 41.93                       | 19.35        |
+| 20                | 41.93            | 41.93                       | 16.12        |
+| 21                | 45.16            | 41.93                       | 12.90        |
+| 22                | 48.38            | 41.93                       | 9.67         |
+| 23                | 51.61            | 41.93                       | 6.45         |
+| 24                | 54.83            | 41.93                       | 3.22         |
+| 25                | 58.06            | 41.93                       | 0.0          |
+| 26                | 61.29            | 38.70                       | 0.0          |
+| 27                | 64.51            | 35.48                       | 0.0          |
+| 28                | 67.74            | 32.25                       | 0.0          |
+| 29                | 70.96            | 29.03                       | 0.0          |
+| 30                | 74.19            | 25.80                       | 0.0          |
+
 ##### Casting
 Used to perform a skill check whenever the player casts a runic spell. ``Casting``.
 
