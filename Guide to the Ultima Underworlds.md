@@ -3528,7 +3528,7 @@ A trigger that fires when a door is unlocked.
 | 13          | Mystral wants you to spy on altara                                                                      |
 | 14          | Likely all lines of power have   been cut.                                                              |
 | 15          | Altara tells you about the   listener                                                                   |
-| 18          | You learn that the Trikili can   talk.                                                                  |
+| 18          | You learn that the Trikili can talk or possibly have the quest to find out their history.               |
 | 19          | You know Relk has found the black   jewel (josie tells you)                                             |
 | 20          | You've met Mokpo                                                                                        |
 | 22          | Blog is now your friend(?)                                                                              |
@@ -3646,6 +3646,31 @@ TODO: Write up how the arena works.
 
 ##### QBert Puzzle.
 TODO Document this puzzle in full. It is very complex
+This trap controls the QBert pyramid in the ethereal void and the behaviour of some moongates in the etheral void. To progress in the game it is necessary to pass through a sequence of themed zones of colours (red,blue,purple and yellow in any order) and setting the colours of the pyramid to that target colour. Finally setting the colours to white allows progression to the shrine of spirituality.
+
+Trap ``owner`` controls what behaviour to implement. It's likely the following is the case
+
+| Owner    |  Controls                                   |
+|----------|---------------------------------------------|
+| 0-9      | Starts a pyramid                            |
+| 10-19    | Controls moongate teleportation             |
+| 20-62    | Looks like these control cameras            |
+| 63       | Changes the current tile to the next colour | 
+
+**Control variables**
+As described in the game variables section, variables 101 to 108 are used to store the state of the puzzle.
+
+**Starting a pyramid**
+After completing a zone, the player is teleported on top of the pyramid at (49,51) and the colour at the top is set to a target colour. Valid values are red=0(?),blue=2,purple=3,yellow=4,white(final)=5.
+
+**Moongate teleportation**
+The traps will reference tiles on the map at coordinate (x=owner+46, y=1). The wall texture of that referenced tile is used to generate an rng calculation (TODO) that will reference another tile on the range (x=owner+46, y = 32+rng result). TODO this will control where the player teleports to. The players current position is used in the calcalations, presumably to prevent teleportation to the same spot they are already in.
+
+**Cameras**
+TODO: Possibly this is to do with spawning the camera hack trap in the pyramid room.
+
+**Colour Changing**
+Will change to the next colour when stepped on. TODO how the trap checks for completion.
 
 ## NPCS
 ### NPC Basics
