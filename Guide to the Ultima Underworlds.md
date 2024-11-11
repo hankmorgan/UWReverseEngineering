@@ -1284,7 +1284,7 @@ From UWFormats:
 | 447       |                                                                                            |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | 448       | 99                                                                                         |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | 449       |                                                                                            |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| 450       | 100                                                                                        | Start of Qbert Array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| 450       | 100                                                                                        | Start of Qbert Array, set to 6 when the puzzle is first started                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | 451       |                                                                                            |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | 452       | 101                                                                                        | First colour in qbert                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | 453       |                                                                                            | 2=blue, 0=red, 3=purple, 4=yellow, 5=final                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
@@ -3640,7 +3640,7 @@ TODO: Why no magic
 Magic spells at level 3 or higher are hard coded to fail when cast in ``Britannia``
 
 #### ``Pits Of Carnage``
-TODO: Write up how the arena works.
+TODO: Write up how the arena works. basically a mix of babl_hack used in conversations with denizens of the pits and traps within the arena areas.
 
 #### The ``Ethereal Void``
 
@@ -3659,6 +3659,14 @@ Trap ``owner`` controls what behaviour to implement. It's likely the following i
 
 **Control variables**
 As described in the game variables section, variables 101 to 108 are used to store the state of the puzzle.
+| Variable   |   Usage                                                                                                               |
+|------------|-----------------------------------------------------------------------------------------------------------------------|
+|  100       | When puzzle is first began the following variables 101 to 106 are set to 0xFF. This variable is then set to 6.        |
+|  101-105   | Controls what colour is required for each stage of the puzzle. Colours are Red=0, Blue=2, Purple=3, Yellow=4, Final =5|  
+|  106       | Unused but possibly another colour slot                                                                               |
+|  107       | When value is 1 the player needs to set colours on the pyramid                                                        |
+|  108       | Most likely the offset for the last tile to be changed. Value appears to be tile data memory address divided by 4     |
+
 
 **Starting a pyramid**
 After completing a zone, the player is teleported on top of the pyramid at (49,51) and the colour at the top is set to a target colour. Valid values are red=0(?),blue=2,purple=3,yellow=4,white(final)=5.
@@ -3727,7 +3735,5 @@ The Castle schedule in ``UW2`` is hard coded (for the most part) and is based on
 ## Reverse Engineering
 
 ## Trivia
-
 Here is some "fun" discoveries
 * Equiping the shield of very great toughness (link=717) in the primary hand allows the player to cast the on hit Unlocking spell in ``UW2`` when punching a door. Presumably other shield types or objects could cast other spells but no other instances of this bug have been discovered yet...
-* Throwing objects at buttons can trigger them at a distance.
