@@ -3654,7 +3654,7 @@ Trap ``owner`` controls what behaviour to implement. It's likely the following i
 |----------|---------------------------------------------|
 | 0-9      | Starts a pyramid                            |
 | 10-19    | Controls moongate teleportation             |
-| 20-62    | Looks like these control cameras            |
+| 20-62    | Controls the cameras when using orbs        |
 | 63       | Changes the current tile to the next colour | 
 
 **Control variables**
@@ -3669,13 +3669,15 @@ As described in the game variables section, variables 101 to 108 are used to sto
 
 
 **Starting a pyramid**
-After completing a zone, the player is teleported on top of the pyramid at (49,51) and the colour at the top is set to a target colour. Valid values are red=0(?),blue=2,purple=3,yellow=4,white(final)=5.
+After completing a zone, the player is teleported on top of the pyramid at (49,51) and the colour at the top is set to a target colour. Valid values are red=0(?),blue=2,purple=3,yellow=4 and gold(final)=5.
+
+Stepping on the very top tile (49,51) will change the texture of one of the tmap objects located in a line near the blackrock wall entrance to the void. Eg starting the blue pyramid will change the blue tmap there to a golden tmap (texture index 5). This is enabled by the values in game variables 100 to 107 being set to a value other than 0xFF.
 
 **Moongate teleportation**
 The traps will reference tiles on the map at coordinate (x=owner+46, y=1). The wall texture of that referenced tile is used to generate an rng calculation (TODO) that will reference another tile on the range (x=owner+46, y = 32+rng result). TODO this will control where the player teleports to. The players current position is used in the calcalations, presumably to prevent teleportation to the same spot they are already in.
 
 **Cameras**
-TODO: Possibly this is to do with spawning the camera hack trap in the pyramid room.
+After completing a pyramid the player is teleported to a hidden room. This trap mode controls what the orbs in these rooms will display. Typically this is a view of the central void area.
 
 **Colour Changing**
 Will change to the next colour when stepped on. TODO how the trap checks for completion.
