@@ -3663,24 +3663,34 @@ As described in the game variables section, variables 101 to 108 are used to sto
 |------------|-----------------------------------------------------------------------------------------------------------------------|
 |  100       | When puzzle is first began the following variables 101 to 106 are set to 0xFF. This variable is then set to 6.        |
 |  101-105   | Controls what colour is required for each stage of the puzzle. Colours are Red=0, Blue=2, Purple=3, Yellow=4, Final =5|  
-|  106       | Unused but possibly another colour slot                                                                               |
+|  106       | Unused but possibly another colour slot as it appears the puzzle may have supported additional zones at one point     |
 |  107       | When value is 1 the player needs to set colours on the pyramid                                                        |
-|  108       | Most likely the offset for the last tile to be changed. Value appears to be tile data memory address divided by 4     |
+|  108       | Is the offset for the last tile to be changed. Value is the memory offset from start of tilemap data divided by 4     |
+
 
 
 **Starting a pyramid**
-After completing a zone, the player is teleported on top of the pyramid at (49,51) and the colour at the top is set to a target colour. Valid values are red=0(?),blue=2,purple=3,yellow=4 and gold(final)=5.
+After completing the entrance zone, the player is teleported on top of the pyramid at (49,51) and the colour at the top is set to a target colour. Valid values are red=0(?),blue=2,purple=3,yellow=4 and gold(final)=5.
 
 Stepping on the very top tile (49,51) will change the texture of one of the tmap objects located in a line near the blackrock wall entrance to the void. Eg starting the blue pyramid will change the blue tmap there to a golden tmap (texture index 5). This is enabled by the values in game variables 100 to 107 being set to a value other than 0xFF.
+
+The last colour entry in variables 101 to 105 that is not set to 0xFF is considered to be the current colour need to be filled.
 
 **Moongate teleportation**
 The traps will reference tiles on the map at coordinate (x=owner+46, y=1). The wall texture of that referenced tile is used to generate an rng calculation (TODO) that will reference another tile on the range (x=owner+46, y = 32+rng result). TODO this will control where the player teleports to. The players current position is used in the calcalations, presumably to prevent teleportation to the same spot they are already in.
 
 **Cameras**
-After completing a pyramid the player is teleported to a hidden room. This trap mode controls what the orbs in these rooms will display. Typically this is a view of the central void area.
+After completing a pyramid the player is teleported to a hidden room. This trap mode controls what the orbs in these rooms will display. Typically this is a view of the central void area using a camera trap.
+The camera trap that is created for this purpose is spawned temporarily and is destroyed after viewing.
 
-**Colour Changing**
-Will change to the next colour when stepped on. TODO how the trap checks for completion.
+TODO: math for position of camera view.
+
+**Colour Changing and completion of pyramid**
+Will change to the next colour when stepped on. 
+When all steps are are matched with the target colour the pyramid walls will change to that colour, the exit moongate is revealed by changing it's ``invis`` flag, teleport traps are pointed to the hidden rooms and the move trigger at the moongate is raised in height so the player can trigger them.
+The teleport destination tileX is calculated by the formula ``4 + (colour * 6)``. The destination Y value is always 4.
+
+By default to teleport destination when the moongates are hidden is set to the Sigil of Binding but it may not be possible to activate the teleport when that destination is set due to trigger positioning.
 
 ## NPCS
 ### NPC Basics
