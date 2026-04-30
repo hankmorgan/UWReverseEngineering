@@ -155,7 +155,7 @@
           - [TMAP Change Trap](#tmap-change-trap)
           - [Bullfrog Trap](#bullfrog-trap)
           - [Change Graffiti Trap](#change-graffiti-trap)
-        - [Bullfrog Puzzle Traps](#bullfrog-puzzle-traps)
+          - [Bullfrog Puzzle Traps](#bullfrog-puzzle-traps)
           - [Bly Skup Chamber Trap](#bly-skup-chamber-trap)
           - [Scintillus Force Field Trap](#scintillus-force-field-trap)
           - [Change Object Quality Trap](#change-object-quality-trap)
@@ -182,6 +182,7 @@
           - [Start Conversation Trap](#start-conversation-trap)
           - [Gem Face Rotate](#gem-face-rotate)
           - [World Teleport Trap](#world-teleport-trap)
+          - [Quake Trap](#quake-trap)
           - [Unknown AI Goal Trap 62](#unknown-ai-goal-trap-62)
           - [End Game Trap](#end-game-trap)
         - [a\_door trap](#a_door-trap)
@@ -3121,7 +3122,7 @@ TODO: Document the bullfrog.
 
 Changes graffiti in the ``Pits Of Carnage``
 
-##### Bullfrog Puzzle Traps
+###### Bullfrog Puzzle Traps
 
 Traps for controlling the Bullfrog puzzle on Level 4 of ``UW1``. The action of the trap is controlled by the ``Owner`` value.
 
@@ -3282,6 +3283,15 @@ TODO: Add the variable number here.
 
 Used to teleport from the blackrock gem to a hard-coded location in another world. Available worlds are in game variable TODO and the target world in game variable TODO.
 
+###### Quake Trap
+``Quality`` 60 to 63
+This trap causes the screen to shake or tosses the player in the air.
+
+``Quality`` minus 59 and ``Owner`` are parameters used to control the effect.
+- The ``quality``minus 59 parameter controls which effects apply. Bit 0 set causes screenshake, bit 1 set causes the player to be launched upwards.
+- The ``owner`` parameter is only used with the launch effect and controls the strength of that effect.
+
+* ``UW1`` only and not used in game.
 
 ###### Unknown AI Goal Trap 62
 ``Quality`` 62
