@@ -2088,6 +2088,8 @@ Each possible value of "quality type" maps onto a group of 6 strings in block 4 
 ### Graphic Formats
 #### Textures
 
+The solid colour displayed in low detail mode is controlled by the the top left pixel of the texture.
+
 #### Sprites
 
 #### Bitmaps
