@@ -2252,7 +2252,12 @@ Experience is known to increase and decrease in the following circumstances
 
 * Killing an NPC.
 * Finding a map piece in Loth's tomb (xp gain is world number + 1)
-* When visiting new maps (mechanic not fully understood but appears to be linked to character level). A good example of this in action is if you run from level 1 of ``UW`` straight to level 2. Enough exp for a level gain occurs without any combat.
+* When visiting previously unvisited areas. 
+  * On every frame the game will check the tiles flagged by the automap. Tiles that have not been visited previously will increment a counter. 
+  * After the counter has been accumulated the following formula is used to calculate the base exp gain. 
+  * ``exp_gain = NoOfTilesDiscoverd * DungeonLevel / 0xA``  For UW2 Dungeon Level is replaced by World No (DungeonLevel/8) + 1.
+  * A good example of this in action is if you run from level 1 of ``UW`` straight to level 2. Enough exp for a level gain occurs without any combat.
+  * The exp gain is most obvious when a new level is visited but the exp gains can be observed by just walking into wide open areas.
 * In conversations using the ``x_exp`` ``imported function``.
 * Change in the ``new_player_exp`` ``imported variable`` after a conversation
 * Special death case when killing Fissif. (Possibly you can beat him up and he'll surrender to go to jail) TODO test this
@@ -2265,10 +2270,13 @@ It's expected normally that Exp gains are just based on the Exp reward defined i
 
 Random 2D dice roll is made to modify the Exp value.
 ```c#
-return 2Dexp + (exp * 4);
+exp_reward = 2Dexp + (exp * 4);
 ```
 
-If the npc killed is powerful; then the Exp reward is increased by a calculation (TODO confirm calculation here)
+If the npc killed is powerful; then the Exp reward is increased by a calculation 
+```c#
+exp_reward = exp_reward + (((0x18 + Rng.r.Next(0x18)) * exp_reward) / 0x10);
+```
 
 However any exp reward (from any exp gain source) appears to be reduced when a calculation based on the current map level no is compared with the player level. This appears to indicate that going back to earlier levels to defeat enemies is less rewarding for EXP then killing them at a lower character level. This needs to be tested more.
 
