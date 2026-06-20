@@ -2391,7 +2391,9 @@ The ``heading`` bits 0-1 are set with values as follows:
     1 = Identified as being magical
     2 = Fully identified
 
-Bit 2 is used to track if an identification attempt has been made. Value is set to 1 when the ``lore`` check is attempted. This prevents spamming ``lore`` checks when to brute-force identification. When the ``lore`` skill is increased this value is reset to 0 for all objects in the player inventory to allow re-examination.
+Bit 2 is used to track if an identification attempt has been made. Value is set to 1 when the ``lore`` check is attempted. This prevents spamming ``lore`` checks when to brute-force identification. 
+
+- When the ``lore`` skill is increased, bit 2 of heading is set to 0 for all objects(except 3d models and traps/triggers) on the map to allow re-examination. Strangely this reset does not apply to objects in the player inventory (player would need to drop all items to the ground to do a re-examination) nor does the fact that the lore skill is stored on the save file appear to be used to allow for rechecks of items on other levels. Eg if player visits a level where their last lore level was lower than it is now and as a result objects would be reset to allow for re-attempting identification.
 
 The following table lists the probabilities of each outcome depending on the player skill level
 
