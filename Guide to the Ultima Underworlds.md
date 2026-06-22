@@ -2484,7 +2484,9 @@ Result = SearchSkill vs  ((DungeonLevel-1) * 2 + 10)
 ##### Track
 The ``Track`` skill is mainly used to detect if any creatures are located nearby when *F9* is pressed.
 
-TODO More detail on how this works
+This is a skill check roll against the creatures stealth(quietness) attribute.
+
+In ``UW2``, if the skill check is a critical roll the string will print out the class of the detected creature. 
 
 ###### Fishing Skill Check
 
