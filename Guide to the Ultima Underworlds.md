@@ -72,7 +72,8 @@
         - [Track](#track)
           - [Fishing Skill Check](#fishing-skill-check)
       - [Sneak](#sneak)
-      - [Repair](#repair)
+        - [Stealth Calculations](#stealth-calculations)
+        - [Detection](#detection)
       - [Charm](#charm)
       - [Lockpick](#lockpick)
       - [Acrobat](#acrobat)
@@ -1938,8 +1939,8 @@ The presence of player attributes in the critter data point to some usages of da
 | 1a     | int8     | Stab attack Damage         |                                                                                                                                                                                                                                                                |
 | 1b     | int8     | Stab attack Probability    | How likely the critter will choose to make this attack If all zeros then   attack will not be made.                                                                                                                                                            |
 | 1c     | int8     | UNKNOWN                    | This value squared + 3 is used to compare with player distance from npc.   Possibly stealth detection score, Also used for attack flee threshold calcs.   TODO reconfirm                                                                                       |
-| 1d     | int8     | Search distance            | Used to calculate search distances. Used as a check value in   DetectMonsters()                                                                                                                                                                                |
-| 1e     | int8     | UNKNOWN                    | Bits 4,5,6,7 Referenced in angering npcs during theft as a distance. An   awareness range?                                                                                                                                                                     |
+| 1d     | int8     | Stealth Scores            | Used to determine how stealthy a player/npc is.  Bits 0-3 are the stealth quietness values, 4-7 are stealth visibility()                                                                                                                                                                                |
+| 1e     | int8     | Awarness Scores            | Used to determine how able the NPC is to detect it's target. Bits 0-3 are the sound detection  values, 4-7 are visibility detection. Scores are tested against the stealth scores above                                                                                                                                                                    |
 | 1f     | int8     | Possibly missile skill     | Missile Accuracy or skill and another value that is looked at in   NpcWanderUpdate() to decide if NPC changes course. Referenced in combat   movement too                                                                                                      |
 | 20     | 3 x int8 | Loot table                 | See loot table below                                                                                                                                                                                                                                           |
 | 23     | int8     | UNKNOWN                    |                                                                                                                                                                                                                                                                |
@@ -2391,7 +2392,9 @@ The ``heading`` bits 0-1 are set with values as follows:
     1 = Identified as being magical
     2 = Fully identified
 
-Bit 2 is used to track if an identification attempt has been made. Value is set to 1 when the ``lore`` check is attempted. This prevents spamming ``lore`` checks when to brute-force identification. When the ``lore`` skill is increased this value is reset to 0 for all objects in the player inventory to allow re-examination.
+Bit 2 is used to track if an identification attempt has been made. Value is set to 1 when the ``lore`` check is attempted. This prevents spamming ``lore`` checks when to brute-force identification. 
+
+- When the ``lore`` skill is increased, bit 2 of heading is set to 0 for all objects(except 3d models and traps/triggers) on the map to allow re-examination. Strangely this reset does not apply to objects in the player inventory (player would need to drop all items to the ground to do a re-examination) nor does the fact that the lore skill is stored on the save file appear to be used to allow for rechecks of items on other levels. Eg if player visits a level where their last lore level was lower than it is now and as a result objects would be reset to allow for re-attempting identification.
 
 The following table lists the probabilities of each outcome depending on the player skill level
 
@@ -2482,7 +2485,9 @@ Result = SearchSkill vs  ((DungeonLevel-1) * 2 + 10)
 ##### Track
 The ``Track`` skill is mainly used to detect if any creatures are located nearby when *F9* is pressed.
 
-TODO More detail on how this works
+This is a skill check roll against the creatures stealth(quietness) attribute.
+
+In ``UW2``, if the skill check is a critical roll the string will print out the class of the detected creature. 
 
 ###### Fishing Skill Check
 
@@ -2491,7 +2496,67 @@ In ``UW2`` the ``Track`` skill is used when when fishing. If (``Track``+7)/8 >= 
 In ``UW1`` the ``Track`` skill is not used and instead it is a rng(0-4) roll. If that result is 0 then the fish can be caught.
 
 #### Sneak
-To confirm. Compared with a critter object properties value to see if they can become aware of the player. 
+
+##### Stealth Calculations
+
+The sneak skill is a modifier to two critter table values in  ``objects.dat``. There are two values that are relevant. The stealth quietness score, and the stealth visibility score. Both the player and NPCs can have stealth values in objects.dat. The NPC values are used for the tracking skill check and for NPC to NPC detection in the rare circumstances where NPCs are hostile to each other.
+
+The base values for these are
+``
+    StealthCalculationScoreQuietness = 13 - (Sneak / 3);
+    StealthCalculationScoreVisibility = 15 - (Sneak / 5);
+``
+If the player has a magic enchantment that grants stealth effects the stealth score is modified as follows
+(reduces sound), conceal(reduces visibility) or invisibility(guess..) then the relevant stealth score is modified by 
+|  Spell      |  Affects   |  Modifier (will not go below 0)  |
+|-------------|------------|----------------------------------|
+| Stealth     | Quietness  |  -16                             |
+| Concel      | Visibility |  -5                              |
+| Invisibility| Visibility |  -16                             |
+
+
+The visibility score is applied to the player (and to my current knowledge is not modified by the players light level).
+
+The quietness score is modified by player momentum and current movement speed to a max of 15.
+
+```
+Quietness +=((momentum / 0xA) / PlayerActualForwardSpeed) - 5;
+```
+
+* This score will tick down until back to the base score by 1 every 8 frames.
+
+When the player is charging a weapon attack the quietness score is set to 15. Representing the player making noise when attacking. 
+This noise is what probably makes stealth most ineffective as a character option as it gives time for the NPC to detect the player, turn around and negate the combat flanking bonus.
+
+##### Detection
+
+NPCs detect the player by means of two "radars". A noise detection range check and a sight detection range check which are executed. 
+
+The NPC must first do a noise detection check, followed by a sight detection check (The NPC must be facing the target for the visibility checks) and finally a pathfind check to confirm the npc tile and the target tile are connected to each other (not necessarily pathable though). Eg they won't detect if there is a solid wall between them and their target. 
+
+The general logic is
+````
+  var xvector = currentGTargXHome - currObj_XHome;
+  var yvector = currentGTargYHome - currObj_YHome;
+  var distsquared = (int)Math.Pow(xvector, 2) + Math.Pow(yvector, 2);
+  var soundscore = (int)Math.Pow((critterObjectDat.noisedetectionrange(critter.item_id) * critterObjectDat.StealthQuietness(gtargObject.item_id)) / 16, 2);
+
+  if (soundscore / 4 < distsquared)
+  {
+    var visibilitydistance = (int)Math.Pow((critterObjectDat.sightdetectionrange(critter.item_id) * critterObjectDat.StealthVisibility(gtargObject.item_id)) / 16, 2);
+
+      if (distsquared < visibilitydistance)
+      {
+        //Do facing check. Either front, front left or front right facing sprite angles are required.
+        //do pathing test
+      }
+  }
+
+```
+
+###### Note on sleeping and detection
+
+Although the game has a mechanic for allowing monsters to find the player when sleeping this mechanic is not affected by player stealth 
 
 #### Repair
 Checked when the player performs a ``repair`` on an object using an ``anvil``. Used to evaluation the difficulty message and to calculate the resulting change on object ``quality`` when the ``repair`` is done.
