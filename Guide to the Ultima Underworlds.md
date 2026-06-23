@@ -74,6 +74,8 @@
       - [Sneak](#sneak)
         - [Stealth Calculations](#stealth-calculations)
         - [Detection](#detection)
+          - [Note on sleeping and detection](#note-on-sleeping-and-detection)
+      - [Repair](#repair)
       - [Charm](#charm)
       - [Lockpick](#lockpick)
       - [Acrobat](#acrobat)
@@ -2226,9 +2228,11 @@ TODO confirm how it works with skills.dat for multiple skill questions.
 RNG is based on the game time that the game has started at.
 
 ### Leveling Up and Experience Points
-Levelling up and Experience(EXP) can be more complex than expected.
 
-From Mitch Aigner's FAQ level ups occur at the below thresholds. I'm unsure if the skill point per exp is correct. Disassmembly of the ``UW2`` experience functions seem to indicate that the EXP gain is based on the new player level. Level 2 - 2 points, level 3 - 3 points etc but this needs to be properly tested. (it's possible both facts are true, points per exp gain and points per level gained.)
+Levelling up and Experience(EXP) can be more complex than expected. In the save file ``EXP`` is stored in units of 0.1 Eg a value of 2000 means ``exp`` is displayed as 200;
+
+From Mitch Aigner's FAQ level ups occur at the below thresholds. I'm unsure if the skill point per exp is correct as disassmembly of the ``UW2`` experience functions seem to indicate that the skill gain is a point every 150 exp in ``UW2`` and possibly every 300 points in ``UW1``. Exp can continue to be gained after hitting level 15 but can in theory only go up as far as 524,272.
+
 
 | Level |  Exp. Points |   Exp./Skill pt. |
 |-------|--------------|------------------|
@@ -2248,13 +2252,14 @@ From Mitch Aigner's FAQ level ups occur at the below thresholds. I'm unsure if t
 |14     |  4800        |                  |
 |15     |  6400        |                  |
 
+A 50% penalty is applied to ``exp`` gains when the points are earned on a dungeon level or world number that is lower than the players character level.
 
 Experience is known to increase and decrease in the following circumstances
 
 * Killing an NPC.
 * Finding a map piece in Loth's tomb (xp gain is world number + 1)
 * When visiting previously unvisited areas. 
-  * On every frame the game will check the tiles flagged by the automap. Tiles that have not been visited previously will increment a counter. 
+  * On every frame the game will check the tiles flagged by the automap. Tiles that are to be marked as undiscovered will increment a counter. 
   * After the counter has been accumulated the following formula is used to calculate the base exp gain. 
   * ``exp_gain = NoOfTilesDiscoverd * DungeonLevel / 0xA``  For UW2 Dungeon Level is replaced by World No (DungeonLevel/8) + 1.
   * A good example of this in action is if you run from level 1 of ``UW`` straight to level 2. Enough exp for a level gain occurs without any combat.
@@ -2535,7 +2540,7 @@ NPCs detect the player by means of two "radars". A noise detection range check a
 The NPC must first do a noise detection check, followed by a sight detection check (The NPC must be facing the target for the visibility checks) and finally a pathfind check to confirm the npc tile and the target tile are connected to each other (not necessarily pathable though). Eg they won't detect if there is a solid wall between them and their target. 
 
 The general logic is
-````
+```
   var xvector = currentGTargXHome - currObj_XHome;
   var yvector = currentGTargYHome - currObj_YHome;
   var distsquared = (int)Math.Pow(xvector, 2) + Math.Pow(yvector, 2);
