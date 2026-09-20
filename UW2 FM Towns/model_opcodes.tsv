@@ -1,0 +1,114 @@
+opcode	handler	operand_bytes	length_source	uses_in_uw1_models
+0x0000	do_eof	0	esi-sum only, unverified	0
+0x0002	do_movec	4	esi-sum only, unverified	0
+0x0004	do_movem	4	esi-sum only, unverified	0
+0x0006	do_sortnorm	16	read + exercised	3
+0x0008	do_pntres	2	exercised	1
+0x000a	do_move_odata	4	esi-sum only, unverified	0
+0x000c	do_sortnorm_x0	12	read + exercised	3
+0x000e	do_sortnorm_y0	12	read	0
+0x0010	do_sortnorm_z0	12	read + exercised	4
+0x0012	do_sfcal	2	read + exercised	14
+0x0014	do_ifle	6	esi-sum only, unverified	0
+0x0016	do_ifge	6	read + exercised	8
+0x0018	do_org	12	read + exercised	1
+0x001a	do_asmcal	0	esi-sum only, unverified	0
+0x001c	do_y_rel	6	esi-sum only, unverified	0
+0x001e	do_int2	0	invalid-opcode stub	0
+0x0020	do_int2	0	invalid-opcode stub	0
+0x0022	do_polyres		unknown	0
+0x0024	do_int2	0	invalid-opcode stub	0
+0x0026	do_movres	4	esi-sum only, unverified	0
+0x0028	do_int2	0	invalid-opcode stub	1
+0x002a	do_x_rel	6	esi-sum only, unverified	0
+0x002c	do_z_rel	6	esi-sum only, unverified	0
+0x002e	do_setcolor	2	esi-sum only, unverified	0
+0x0030	do_int2	0	invalid-opcode stub	0
+0x0032	do_ijmp_i	0	esi-sum only, unverified	0
+0x0034	do_wtmap		unknown	0
+0x0036	do_tmap		unknown	0
+0x0038	do_obj	24	esi-sum only, unverified	0
+0x003a	do_uwobj	6	esi-sum only, unverified	0
+0x003c	do_int2	0	invalid-opcode stub	0
+0x003e	do_fetchmap	4	esi-sum only, unverified	0
+0x0040	do_cavesurf	0	exercised	10
+0x0042	do_movel+0x15	0	esi-sum only, unverified	0
+0x0044	do_vexsurf	0	esi-sum only, unverified	0
+0x0046	do_movel+0x15	0	esi-sum only, unverified	0
+0x0048	do_ijmp	0	esi-sum only, unverified	0
+0x004a	do_rorg	6	read + exercised	2
+0x004c	do_defdelta	8	esi-sum only, unverified	0
+0x004e	do_scalebm	4	esi-sum only, unverified	0
+0x0050	do_ihcall	4	read	0
+0x0052	do_int2	0	invalid-opcode stub	0
+0x0054	do_pushc	0	esi-sum only, unverified	0
+0x0056	do_popc	0	esi-sum only, unverified	0
+0x0058	do_jnorm	14	exercised	91
+0x005a	do_uwcrit		unknown	0
+0x005c	do_setcolv	4	esi-sum only, unverified	0
+0x005e	do_jnorm_x0	10	exercised	11
+0x0060	do_jnorm_y0	10	exercised	14
+0x0062	do_jnorm_z0	10	exercised	21
+0x0064	do_jnorm_yz0	6	exercised	23
+0x0066	do_jnorm_xz0	6	exercised	19
+0x0068	do_jnorm_xy0	6	exercised	24
+0x006a	do_int2	0	invalid-opcode stub	0
+0x006c	do_sortvar	12	esi-sum only, unverified	0
+0x006e	do_int2	0	invalid-opcode stub	0
+0x0070	do_ibcall	6	exercised	1
+0x0072	do_ipcall	6	esi-sum only, unverified	0
+0x0074	do_int2	0	invalid-opcode stub	0
+0x0076	do_int2	0	invalid-opcode stub	0
+0x0078	done_clipping_here	10	exercised	20
+0x007a	do_defres	8	exercised	34
+0x007c	do_strres		unknown	0
+0x007e	do_polyres	2 + 2n	exercised	217
+0x0080	do_closure		unknown	0
+0x0082	do_multires	4 + 6n	exercised	9
+0x0084	do_hull		unknown	0
+0x0086	do_x_rel	6	exercised	175
+0x0088	do_y_rel	6	exercised	84
+0x008a	do_z_rel	6	exercised	142
+0x008c	do_addres	8	exercised	3
+0x008e	do_cntres		unknown	0
+0x0090	do_xy_rel	8	exercised	34
+0x0092	do_xz_rel	8	exercised	45
+0x0094	do_yz_rel	8	exercised	18
+0x0096	do_lnres		unknown	0
+0x0098	do_int2		invalid-opcode stub	0
+0x009a	do_int2		invalid-opcode stub	0
+0x009c	do_rod		unknown	0
+0x009e	do_tmap_tri		unknown	0
+0x00a0	do_compact_tmap	6	exercised	8
+0x00a2	do_compact_wtmap		unknown	0
+0x00a4	do_bcompact_tmap		unknown	0
+0x00a6	do_bcompact_wtmap		unknown	0
+0x00a8	do_gtmap	4 + 6n	exercised	2
+0x00aa	do_gwtmap		unknown	0
+0x00ac	do_gtri	0	esi-sum only, unverified	0
+0x00ae	do_setbmcol	2	esi-sum only, unverified	0
+0x00b0	do_mouseq	0	esi-sum only, unverified	0
+0x00b2	do_set_tmctxt	2	esi-sum only, unverified	0
+0x00b4	do_ctxt_gtmap	2 + 6n	exercised	2
+0x00b6	do_minires		unknown	0
+0x00b8	do_minimulti		unknown	0
+0x00ba	do_ihcall_ind	4	read + exercised	2
+0x00bc	do_uwcolv	4	read + exercised	62
+0x00be	do_movei	4	read	0
+0x00c0	do_settmobj		unknown	0
+0x00c2	do_ipcall_ind	6	esi-sum only, unverified	0
+0x00c4	do_ibcall_ind	6	esi-sum only, unverified	0
+0x00c6	do_subres	6	esi-sum only, unverified	0
+0x00c8	do_goursurf	2	esi-sum only, unverified	0
+0x00ca	do_goursurfv	2	esi-sum only, unverified	0
+0x00cc	do_setshade	2 + 3n, aligned even	read	0
+0x00ce	do_ctxt_gmap	8	exercised	1
+0x00d0	do_set_gmap_ctxt	2	esi-sum only, unverified	0
+0x00d2	do_compact_map		unknown	0
+0x00d4	do_uwshade	4 + 3n, aligned even	read + exercised	13
+0x00d6	do_uwsurf	0	exercised	150
+0x00d8	do_transsurf	0	esi-sum only, unverified	0
+0x00da	do_uwsetup		unknown	0
+0x00dc	do_bcompact_map		unknown	0
+0x00de	do_movex	6	esi-sum only, unverified	0
+0x00e0	do_movel	8	esi-sum only, unverified	0

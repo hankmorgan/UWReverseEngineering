@@ -55,6 +55,47 @@ The 3D model bytecode carries a shade opcode whose operand has never been fully 
 
 So the operand is **not a small set of special cases**. It is an offset to a word, whose **low byte is the face colour**, and the per vertex shade is that plus a global (`cdist`) clamped to a maximum of 14. Any implementation that treats unlisted operands as a default will paint those faces one flat colour.
 
+## The model interpreter's opcode table
+
+UW's 3D models are not meshes. They are bytecode for a small stack machine, and every opcode dispatches through a jump table. In the FM Towns build that table sits at `0x7628c` in the unpacked image, addressed as `base + opcode * 2` with 4 byte entries, and because this build kept its symbols **every entry points at a named handler**.
+
+`model_opcodes.tsv` is that table read out: 113 opcodes, 100 of them real handlers and 13 pointing at `do_int2`, the invalid-opcode stub. For comparison, `UnderworldGodot`'s `modelloader.cs` names 33, some of them as `M3_UW_FACE_UNK16` and `M3_UW_FACE_UNK40`.
+
+**Three of those 33 names are wrong**, which matters because two of them change behaviour:
+
+| opcode | `modelloader.cs` | actually |
+| --- | --- | --- |
+| `0x00BC` | `M3_UW_FACE_SHADE` | `do_uwcolv` |
+| `0x00BE` | `M3_UW_FACE_TWOSHADES` | `do_movei`, not a colour opcode at all |
+| `0x00D4` | `M3_UW_VERTEX_DARK` | `do_uwshade`, the real shade opcode |
+
+### These models are BSP trees
+
+`do_sortnorm` reads six words of plane data, then **two relative offsets to back and front subtrees which it calls recursively**, then continues. `do_sortnorm_x0`, `_y0` and `_z0` read four words and jump into the same tail. `do_sfcal` takes one such offset, and `do_ihcall` another. So a model is a tree, not a flat stream, and a walker that assumes otherwise runs off the rails at the first sort node.
+
+That is what a naive `esi` sum gets wrong, and it is why five lengths in this table had to be read out of the handlers by hand rather than computed:
+
+| opcode | handler | naive | actual | why |
+| --- | --- | --- | --- | --- |
+| `0x0006` | `do_sortnorm` | 20 | **16** | 6 words of plane data, then two subtree offsets, then `add esi, 4` |
+| `0x000c`/`0e`/`10` | `do_sortnorm_x0`/`y0`/`z0` | 16 | **12** | 4 words, then a jump into that same tail |
+| `0x0012` | `do_sfcal` | 4 | **2** | one subtree offset, not two |
+| `0x0018` | `do_org` | 0 | **12** | uses `lodsd`, three 32 bit reads, not 16 bit |
+| `0x0050`/`ba` | `do_ihcall`/`_ind` | 6 | **4** | shared tail reads one offset then `add esi, 2` |
+
+With those corrected, **all 32 UW1 builtin models walk cleanly to their terminator**, up from 12.
+
+### How far to trust each row
+
+The `length_source` column is the point of the table, so it is worth reading before relying on a number:
+
+- **`read + exercised`** (10) and **`read`** (4): the length was read out of the handler's assembly by hand.
+- **`exercised`** (26): the opcode appears in the shipped UW1 models and all 32 walk to a terminator. A wrong length desyncs the stream and hits an invalid opcode almost immediately, so these are empirically sound even where the number was not hand derived.
+- **`esi-sum only, unverified`** (39): produced by summing `esi` movements in the handler, and **nothing exercises it**. Treat with suspicion. That method silently undercounts any handler that delegates to a helper: `do_defres` advances `esi` inside `modify_mes`, so the sum said 2 where the truth is 8.
+- **`unknown`** (21) and **`invalid-opcode stub`** (13): no length derived, or the entry is `do_int2`.
+
+The `uses_in_uw1_models` column counts occurrences across the 32 builtin models, decoded with the corrected lengths.
+
 ## Mapping names onto the DOS disassembly
 
 DOS `UW2.EXE` has no symbols, so the two have to be tied together by content. Strings work: the routine that references a given string in DOS is the same routine that references it in FM Towns. The DOS side is text processing over `uw2_asm.asm` because IDA has already labelled the strings and tracked the cross references; the FM Towns side is a search for the string's offset as a 32 bit immediate, then the owning symbol.
