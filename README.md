@@ -10,6 +10,8 @@ See ida.asm for a text version of the disassembly.
 
 The game mechanics are being documented in `Guide to the Ultima Underworlds.md`.
 
+`UW2 FM Towns/` holds the original Looking Glass symbol names. The Japanese FM Towns release of UW2 shipped a 32 bit build with its symbol table intact, naming 3237 functions and globals. See that folder's README for the extraction, the confidence checks, and how the names tie back to this disassembly.
+
 ## Following along
 
 Segments are named using the following convention(s):
