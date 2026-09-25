@@ -1,0 +1,14 @@
+dos_ida_name	fmtowns_real_name	anchor_string	confidence
+ErrorCanNoLongerRun_ovr114_D1	pfatal_code_	Underworld can no longer run	high
+CrunchObjectList_seg029_2A8E_1200	ObjCrunch_	Cantcrunch / badobjlist	high
+LoadCritterAnimations_ovr117_0	preload_cr_	CRIT\as.an / CRIT\pg.mp / CRIT\cr.an	high
+CritterCRxxLoadRelated_ovr117_163	PreLoadCritPages_	CRIT\cr??.0?	high
+LoadDatFiles_ovr134_0	init_objects_	comobj.dat	high
+OpenDataFile_ovr152_0	set_light_	shades.dat	medium
+InitConversation_ovr103_53C	Converse_	conversation builtin name table	high
+ImportConversationVariables_ovr106_0	setup_converse_data_	npc_whoami / play_level / dungeon_level	high
+RetrieveImportedVariablesAfterConversation_ovr106_48F	update_converse_data_	new_player_exp / play_hunger	high
+do_demand_ovr097_13BD	do_demand_	npc_attitude	high
+LoadPlayerDat_ovr122_68D	RestorePlayerInv_	player.dat	medium
+SaveLoadPlayerDat_ovr122_17C	SavePlayerInv_	player.dat	medium
+CreatePitFighters_ovr096_351	place_pitfighter_	via call graph from babl_hack	high
